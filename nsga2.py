@@ -36,28 +36,26 @@ import numpy as np
 def ff(xx):
     return 3-(xx-2)**2
 
-
-
 LOWER=-170
 UPPER=170
 IND_SIZE=1
 
 
 def brute_force_optimize(ff):
+    '''
+    solve a trivial parabola by brute force
+    plot the function to verify the maxima
+    '''
     xx=np.linspace(-170,170,10000)
-    #xvalue=np.linspace(-70,-40,1000)
-
     outf=np.array([ ff(float(i)) for i in xx ])
     minima_bf=outf[np.where(outf==np.min(outf))][0]
     optima_bf=outf[np.where(outf==np.max(outf))][0]
     xvalue_bf=xx[np.where(outf==np.max(outf))][0]
     print('maxima of the curve via brute force:', optima_bf)
     print('xvalue of the curve via brute force:', xvalue_bf)
- 
     print('minima of the curve via brute force:', minima_bf)
     import matplotlib
     matplotlib.use('agg')
-
     import matplotlib.pyplot as plt
     plt.plot(xx,outf)
     plt.savefig('simple_function.png')
@@ -70,11 +68,9 @@ def brute_force_optimize(ff):
 
 def sciunitjudge(individual):
     #Uncomment to verify that futures.map is working 
-    #print(futures.scoop.utils.getHosts())
-
-    
+    #print(futures.scoop.utils.getHosts())    
     #print('hello from CPU',scoop.worker)
-    #print scoop.worker
+    #print futures.scoop.utils.scoop.worker()
     assert type(individual[0])==float
     
     ev=ff(individual[0])    
@@ -97,7 +93,6 @@ toolbox.register("map", futures.map)
 toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
 toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
 toolbox.register("evaluate",sciunitjudge)
 toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
 toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
@@ -109,8 +104,11 @@ def sciunit_optimize(ff,seed=None):
     #brute_force_optimize(ff)
     random.seed(seed)
 
-    NGEN = 5#250
-    MU = 100#population size
+    NGEN = 6#250
+    #Warning, the algorithm below is sensitive to certain factors of population size MU.
+    #The mutiples of 100 work, many numbers will not work
+    #TODO email the DEAP list about this
+    MU = 200#population size
     CXPB = 0.9#cross over probability
 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -170,36 +168,13 @@ def sciunit_optimize(ff,seed=None):
 
     #This is analogous to found via optimization:
     #found x coordinate of parabola, ycoodinate of parabola
-    return pop[0].stored_value,pop[0]
+    return logbook, pop[0].stored_value,pop[0][0]
         
 if __name__ == "__main__":
     toolbox.register("map", futures.map)
         
-    # with open("pareto_front/zdt1_front.json") as optimal_front_data:
-    #     optimal_front = json.load(optimal_front_data)
-    # Use 500 of the 1000 points in the json file
-    # optimal_front = sorted(optimal_front[i] for i in range(0, len(optimal_front), 2))
-    
-    #pop, stats = main(ff,3)
-    x,y=sciunit_optimize(ff,3)
-    #print(stats)
+    logbook,y,x=sciunit_optimize(ff,3)
     brute_force_optimize(ff)
     print('pareto front top value in pf hall of fame')
-    print(x,y)
-    #print(pop)
+    print('xcoordinate',x,'ycoordinate',y)
 
-    # pop.sort(key=lambda x: x.fitness.values)
-    
-    # print(stats)
-    # print("Convergence: ", convergence(pop, optimal_front))
-    # print("Diversity: ", diversity(pop, optimal_front[0], optimal_front[-1]))
-    
-    # import matplotlib.pyplot as plt
-    # import numpy
-    
-    # front = numpy.array([ind.fitness.values for ind in pop])
-    # optimal_front = numpy.array(optimal_front)
-    # plt.scatter(optimal_front[:,0], optimal_front[:,1], c="r")
-    # plt.scatter(front[:,0], front[:,1], c="b")
-    # plt.axis("tight")
-    # plt.show()
