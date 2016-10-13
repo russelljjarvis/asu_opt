@@ -1,15 +1,12 @@
-
+import pdb
+import numpy as np
 import array
 import random
-#import json
 import scoop as scoop
 import numpy as np, numpy
 import scoop
 from math import sqrt
 from scoop import futures
-print(futures.scoop.utils.getHosts())
-
-    
 from deap import algorithms
 from deap import base
 from deap import benchmarks
@@ -29,15 +26,13 @@ creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessM
 toolbox = base.Toolbox()
 
 BOUND_LOW, BOUND_UP = -170, 170
-import pdb
-import numpy as np
-#pdb.set_trace()    
-def ff(xx):
-    return 3-(xx-2)**2
-
 LOWER=-170
 UPPER=170
 IND_SIZE=1
+
+def ff(xx):
+    return 3-(xx-2)**2
+
 
 
 def brute_force_optimize(ff):
@@ -47,12 +42,12 @@ def brute_force_optimize(ff):
     '''
     xx=np.linspace(-170,170,10000)
     outf=np.array([ ff(float(i)) for i in xx ])
-    minima_bf=outf[np.where(outf==np.min(outf))][0]
+    #minima_bf=outf[np.where(outf==np.min(outf))][0]
     optima_bf=outf[np.where(outf==np.max(outf))][0]
-    xvalue_bf=xx[np.where(outf==np.max(outf))][0]
+    #xvalue_bf=xx[np.where(outf==np.max(outf))][0]
     print('maxima of the curve via brute force:', optima_bf)
     print('xvalue of the curve via brute force:', xvalue_bf)
-    print('minima of the curve via brute force:', minima_bf)
+    #print('minima of the curve via brute force:', minima_bf)
     import matplotlib
     matplotlib.use('agg')
     import matplotlib.pyplot as plt
@@ -68,10 +63,7 @@ def brute_force_optimize(ff):
 def sciunitjudge(individual):
     #Uncomment to verify that futures.map is working 
     #print(futures.scoop.utils.getHosts())    
-    #print('hello from CPU',scoop.worker)
-    #print futures.scoop.utils.scoop.worker()
-    assert type(individual[0])==float
-    
+    assert type(individual[0])==float    
     ev=ff(individual[0])    
     individual.stored_value=ev    
     total_error=abs(0-ev)
@@ -100,7 +92,6 @@ toolbox.register("select", tools.selNSGA2)
 
 
 def sciunit_optimize(ff,seed=None):
-    #brute_force_optimize(ff)
     random.seed(seed)
 
     NGEN = 6#250
@@ -171,7 +162,7 @@ def sciunit_optimize(ff,seed=None):
         
 if __name__ == "__main__":
     toolbox.register("map", futures.map)
-	#This line confuses scoop. It may want sciunit_optimize to be called main        
+    #The following line confuses scoop. It may want sciunit_optimize to be called main        
     logbook,y,x=sciunit_optimize(ff,3)
     brute_force_optimize(ff)
     print('pareto front top value in pf hall of fame')
