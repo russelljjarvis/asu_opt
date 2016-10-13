@@ -1,7 +1,7 @@
 
-To run this program first enter download the docker-stacks image.
+To run this program first enter download the docker-stacks tree associated with the dev branch.
 
-https://github.com/scidash/docker-stacks.git 
+https://github.com/scidash/docker-stacks/tree/dev
 
 Instructions for getting the image are at the README.md
 

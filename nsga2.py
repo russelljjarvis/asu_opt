@@ -20,7 +20,7 @@ class Individual(list):
         self.stored_value=None
         self.stored_error=None
 
-creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be list type
+creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
 creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
 
 toolbox = base.Toolbox()
@@ -64,8 +64,15 @@ def sciunitjudge(individual):
     #Uncomment to verify that futures.map is working 
     #print(futures.scoop.utils.getHosts())    
     assert type(individual[0])==float    
+
+    # the global scope function ff can change arbitarily
+
     ev=ff(individual[0])    
     individual.stored_value=ev    
+
+    # however calculation of the error function must be updated to match ff.
+    # ie if it is known that the maxima is significantly greater than 0,
+    # differencing the observed chromosome value with 0 (as is done below) will no longer work.
     total_error=abs(0-ev)
     return total_error,
 
