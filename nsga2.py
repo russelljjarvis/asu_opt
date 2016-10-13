@@ -9,7 +9,6 @@ from math import sqrt
 from scoop import futures
 print(futures.scoop.utils.getHosts())
 
-#print futures.scoop.utils.cpu_count()
     
 from deap import algorithms
 from deap import base
@@ -172,7 +171,7 @@ def sciunit_optimize(ff,seed=None):
         
 if __name__ == "__main__":
     toolbox.register("map", futures.map)
-        
+	#This line confuses scoop. It may want sciunit_optimize to be called main        
     logbook,y,x=sciunit_optimize(ff,3)
     brute_force_optimize(ff)
     print('pareto front top value in pf hall of fame')
