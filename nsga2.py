@@ -27,8 +27,6 @@ def brute_force_optimize(ff):
     outf=np.array([ ff(float(i)) for i in xx ])
     optima_bf=outf[np.where(outf==np.max(outf))][0]
     print('maxima of the curve via brute force:', optima_bf)
-    print('xvalue of the curve via brute force:', xvalue_bf)
-    #print('minima of the curve via brute force:', minima_bf)
     import matplotlib
     matplotlib.use('agg')
     import matplotlib.pyplot as plt
@@ -37,10 +35,12 @@ def brute_force_optimize(ff):
     return optima_bf
 
 class model():
+    def __init__(self):
+        self.param_values=None
+    '''
+	A place holder class, not the real thing
 	'''
-	A place holder class
-	'''
-	self.param_values=None
+	
 
 OBJ_SIZE = 1 #single weighted objective function.
 NDIM = 1 #single dimensional optimization problem
@@ -97,7 +97,7 @@ def sciunitjudge(individual,ff,previous_best):
 def sciunit_optimize(bl,bu,ff,seed=None):
     BOUND_LOW=bl
     BOUND_UP=bu
-    import hidden_deap_config  
+
     random.seed(seed)
     NGEN = 6#250
     #Warning, the algorithm below is sensitive to certain muttiples in the population size
@@ -169,52 +169,45 @@ def sciunit_optimize(bl,bu,ff,seed=None):
     #        best_params, best_score, model
     
 class Test:
+    def __init__(self,ff):
+        self.ff = ff#place holder
    
-   def judge(self,model=None):
-      pass # already implemented, returns a score
+    def judge(self,model=None):
+        pass # already implemented, returns a score
    
-   def optimize(self,model=None):
-      # not implemented yet, this is what I need to do with your code
-      best_params = None
-      best_score = -np.inf
-      bl=np.min(range_of_possible_param_values)
-      bu=np.max(range_of_possible_param_values)
+    def optimize(self,model=None):
+        # not implemented yet, this is what I need to do with your code
+        import hidden_deap_config  
+        dir()
+        pdb.set_trace()
+        toolbox.register("map", futures.map)
 
-      #other params to the GA such as number of dimensions, number of
-      #generations,
-      #population size.
-      #mutation rate, cross over rate.
-      #NGEN and pop_size will likely need to increase in proportion to
-      #the number of dimensions in the optimization problem and
-      #how difficult the error surface is.
-      best_params, best_score, model =sciunit_optimize(bl,bu,ff,seed=None)
-      #best_params, best_score, model = call_to_the_GA(bl, bu,other_ga_params ...)
-      return (best_params, best_score, model)
+        best_params = None
+        best_score = -np.inf
+        bl=np.min(range_of_possible_param_values)
+        bu=np.max(range_of_possible_param_values)
+
+        #other params to the GA such as number of dimensions, number of
+        #generations,
+        #population size.
+        #mutation rate, cross over rate.
+        #NGEN and pop_size will likely need to increase in proportion to
+        #the number of dimensions in the optimization problem and
+        #how difficult the error surface is.
+        best_params, best_score, model =sciunit_optimize(bl,bu,self.ff,seed=None)
+        #best_params, best_score, model = call_to_the_GA(bl, bu,other_ga_params ...)
+        return (best_params, best_score, model)
   
-t=Test()
-t.optimize()
 
-#return best_params, best_score, model 
-	
-
-    #for x in model.range_of_possible_param_values:
-	#The GA manages iteration now.    
-	  #model.param_values = x
-      #score = self.judge(model)
-      #if score > best_score:
-      #  best_score  = score
-      #  best_params = x
-    
-    # Return the parameterized model as well as the coordinates
-
-        
 if __name__ == "__main__":
-    toolbox.register("map", futures.map)
     #The following line confuses scoop. It may want sciunit_optimize to be called main        
-
+    
     brute_force_optimize(ff)
     #logbook,y,x=sciunit_optimize(ff,3)
-    best_params, best_score, model = sciunit_optimize(ff,3)
+    #best_params, best_score, model = sciunit_optimize(ff,3)
+    t=Test(ff)
+    best_params, best_score, model=t.optimize()
+
     print('pareto front top value in pf hall of fame')
     print('xcoordinate',x,'ycoordinate',y)
 

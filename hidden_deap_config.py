@@ -12,20 +12,13 @@ from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
 
+toolbox = base.Toolbox()
 
-toolbox.register("map", futures.map)
-toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
-toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
-toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-toolbox.register("evaluate",sciunitjudge)
-toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
-toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
-toolbox.register("select", tools.selNSGA2)
 
 class Individual(list):
-	'''
-	This object is used as one unit of chromosome or allele by DEAP.
-	'''
+    '''
+    This object is used as one unit of chromosome or allele by DEAP.
+    '''
     def __init__(self, *args):
         list.__init__(self, *args)
         self.stored_value=None
@@ -35,16 +28,25 @@ class Individual(list):
 creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
 creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
 
-toolbox = base.Toolbox()
 
 
 def uniform(low, up, size=None):
-	'''
-	This is the PRNG distribution that defines the initial
-	allele population
-	'''
+    '''
+    This is the PRNG distribution that defines the initial
+    allele population
+    '''
     try:
         return [random.uniform(a, b) for a, b in zip(low, up)]
     except TypeError:
         return [random.uniform(a, b) for a, b in zip([low] * size, [up] * size)]
 
+
+
+toolbox.register("map", futures.map)
+toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
+toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
+toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+toolbox.register("evaluate",sciunitjudge)
+toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
+toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
+toolbox.register("select", tools.selNSGA2)
