@@ -177,15 +177,15 @@ class Test:
    
     def optimize(self,model=None):
         # not implemented yet, this is what I need to do with your code
-        import hidden_deap_config  
         dir()
         pdb.set_trace()
         toolbox.register("map", futures.map)
 
         best_params = None
         best_score = -np.inf
-        bl=np.min(range_of_possible_param_values)
-        bu=np.max(range_of_possible_param_values)
+        BOUND_LOW=np.min(range_of_possible_param_values)
+        BOUND_UP=np.max(range_of_possible_param_values)
+        import hidden_deap_config  
 
         #other params to the GA such as number of dimensions, number of
         #generations,
@@ -194,7 +194,7 @@ class Test:
         #NGEN and pop_size will likely need to increase in proportion to
         #the number of dimensions in the optimization problem and
         #how difficult the error surface is.
-        best_params, best_score, model =sciunit_optimize(bl,bu,self.ff,seed=None)
+        best_params, best_score, model =sciunit_optimize(self.ff,seed=None)
         #best_params, best_score, model = call_to_the_GA(bl, bu,other_ga_params ...)
         return (best_params, best_score, model)
   
