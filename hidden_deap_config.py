@@ -42,8 +42,11 @@ def uniform(low, up, size=None):
 
 
 
+
 toolbox.register("map", futures.map)
+
 toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
+
 toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 toolbox.register("evaluate",sciunitjudge)
