@@ -12,9 +12,13 @@ navigate to the this trunk directory, and mount this directory as a local file s
 
 The following  line has only been tested in Ubuntu linux, and has not been tested with OSX
 
+```docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt para-nrn-python bash```
 ```docker run -v `pwd`:/home/mnt -it deap_build```
-Then navigate to `/home/mnt` and run the file `nsga2.py` with monkey patching enabled by executing:
+
+Then navigate to `/home/mnt` and run the file `nsga2.py` with by executing:
 `ipython -i nsga2.py` 
+
+the -i flag facilitates monkey patching.
 
 To run with scoop (in parallel, note this is actually slower for small dimensional problems with small NGEN, and population size, since parallel programs involve interprocess communication related costs).
 

@@ -89,8 +89,11 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
         
     def error_surface(pop,gen,ff=FF):
         '''
+        Plot the population on the error surface at generation number gen.
         solve a trivial parabola by brute force
         plot the function to verify the maxima
+        Inputs are DEAP GA population of chromosomes and generation number
+        no outputs.
         '''
         xx=np.linspace(-170,170,10000)
         outf=np.array([ ff(float(i)) for i in xx ])
@@ -102,7 +105,8 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
         plt.hold(True)
         plt.plot(xx,outf)
         scatter_pop=np.array([ind for ind in pop])
-        scatter_score=np.array([ind.sciunitscore for ind in pop])
+        #note the error score is inverted bellow such that it aligns with the error surface.
+        scatter_score=np.array([-ind.sciunitscore for ind in pop])
         plt.scatter(scatter_pop,scatter_score)
         plt.hold(False)
         plt.savefig('simple_function'+str(gen)+'.png')
@@ -113,7 +117,7 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     def uniform(low, up, size=None):
         '''
         This is the PRNG distribution that defines the initial
-        allele population
+        allele population inputs are the maximum and minimal numbers that the PRNG can generate.
         '''
         try:
             return [random.uniform(a, b) for a, b in zip(low, up)]
@@ -131,8 +135,20 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     def calc_error(individual, ff=FF):
+        '''
+        What follows is a rule for generating error functions that should be generalizable 
+        to finding all global maximas.
+        '''
         value=ff(individual[0])  
-        score=1/value #the larger the return value the smaller the error, always.
+
+        if value>0:
+           score = 1/value #the larger the return value the smaller the error, always.
+        elif value==0:
+           score = 5/4
+        elif value <0:
+           score = -value
+
+
         #the more positive a number the smaller the error.
         #may need to correct for negative values with a minus sign some how.
         individual.sciunitscore=score
@@ -141,8 +157,8 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
             
         #print(individual.sciunitscore)
         
-		#return abs(0-score)
-		return 
+	    #return abs(0-score)
+        return score
 
     def sciunitjudge(individual,ff=FF):#,Previous_best=Previous_best):
         '''
