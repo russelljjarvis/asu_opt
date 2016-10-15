@@ -23,6 +23,8 @@ def sobf(ff):
   '''
   sciunit optimize via brute force.
   takes a function as an input returns the coordinates of an optima. 
+  
+  Not actually used.
   '''
   x_best = None
   y_best = -np.inf
@@ -36,18 +38,18 @@ def sobf(ff):
 class model():
     '''
     A place holder class, not the real thing
+	Not actually used.
     '''
     def __init__(self):
         self.param_values=None
 
     
 class Test:
-    #from deap_config import deap_capsule
-
+   
     def __init__(self,ff,range_of_values):
         self.ff = ff#place holder
         self.range_of_values=range_of_values
-        #self.dcclass=deap_capsule()
+
     def judge(self,model=None):
         pass # already implemented, returns a score
    
@@ -64,16 +66,13 @@ class Test:
   
 
 if __name__ == "__main__":
-    #The following line confuses scoop. It may want sciunit_optimize to be called main        
-
-    def FF(xx): #hack make this a global scope variable
+   
+    def ff(xx): 
         return 3-(xx-2)**2
 
-    
+   
     range_of_values=np.linspace(-170,170,10000)
-    t=Test(FF,range_of_values)
-    #t.dcclass.tb.register("map", futures.map)
-
+    t=Test(ff,range_of_values)
     best_params, best_score, model=t.optimize()
     print('pareto front top value in pf hall of fame')
     print('best params',best_params,'best_score',best_score, 'model',model)
