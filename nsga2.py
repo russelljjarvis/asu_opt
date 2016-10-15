@@ -101,12 +101,12 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
         import matplotlib.pyplot as plt
         plt.hold(True)
         plt.plot(xx,outf)
-        for ind in pop:
-           #pdb.set_trace()
-           plt.scatter(ind[0],ind.sciunitscore)
+        scatter_pop=np.array([ind for ind in pop])
+        scatter_score=np.array([ind.sciunitscore for ind in pop])
+        plt.scatter(scatter_pop,scatter_score)
         plt.hold(False)
         plt.savefig('simple_function'+str(gen)+'.png')
-        #return optima_bf, xx, outf
+
 
 
 
