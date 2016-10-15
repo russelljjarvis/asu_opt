@@ -1,8 +1,12 @@
+The output of this program is a series of png images, the file names are indexed by the iterations of generation, by stepping through the series of images you can watch the population converge around the optima of the error function.
 
+The program can be run with or without scoop (see more on that below).
+
+## Instructions for building, deploying etc.
 
 To run this program first enter download the docker-stacks tree associated with the dev branch.
 
-https://github.com/scidash/docker-stacks/tree/dev
+`https://github.com/scidash/docker-stacks/tree/dev`
 
 Instructions for getting the image are at the README.md
 
@@ -15,8 +19,8 @@ The following  line has only been tested in Ubuntu linux, and has not been teste
 
 Just build the image and run the python code via the image:
 
-sudo docker build -t deapscoop1 . 
-sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash
+`sudo docker build -t deapscoop1 .` 
+```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
 
 Interactive Development and Monkey patching:
@@ -27,9 +31,9 @@ Interactive Development and Monkey patching:
 Then navigate to `/home/mnt` and run the file `nsga2.py` with by executing:
 `ipython -i nsga2.py` 
 
-the -i flag facilitates monkey patching.
+the `-i` flag facilitates monkey patching.
 
-To run with scoop (in parallel, note this is actually slower for small dimensional problems with small NGEN, and population size, since parallel programs involve interprocess communication related costs).
+To run with scoop (in parallel, note this is actually slower for small dimensional problems with small `NGEN`, and population size, since parallel programs involve interprocess communication related costs).
 
 execute:
 `python -m scoop nsga2.py`
