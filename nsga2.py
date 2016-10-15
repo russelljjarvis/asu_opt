@@ -49,6 +49,7 @@ def brute_force_optimize(ff):
     plt.savefig('simple_function.png')
     return optima_bf
 
+
 class model():
     '''
     A place holder class, not the real thing
@@ -68,9 +69,6 @@ NDIM = 1 #single dimensional optimization problem
 def FF(xx): #hack make this a global scope variable
     return 3-(xx-2)**2
 
-Previous_best=-np.inf #hack make this a global scope variable
-    
-
 
 
 
@@ -82,12 +80,36 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     class Individual(list):
         def __init__(self, *args):
             list.__init__(self, *args)
-            self.stored_value=None
-            self.stored_error=None
+            self.stored_x=None
+            self.stored_f_x=None
             self.sciunitscore=None
         '''
         This object is used as one unit of chromosome or allele by DEAP.
         '''
+        
+    def error_surface(pop,gen,ff=FF):
+        '''
+        solve a trivial parabola by brute force
+        plot the function to verify the maxima
+        '''
+        xx=np.linspace(-170,170,10000)
+        outf=np.array([ ff(float(i)) for i in xx ])
+        optima_bf=outf[np.where(outf==np.max(outf))][0]
+        print('maxima of the curve via brute force:', optima_bf)
+        import matplotlib
+        matplotlib.use('agg')
+        import matplotlib.pyplot as plt
+        plt.hold(True)
+        plt.plot(xx,outf)
+        for ind in pop:
+           #pdb.set_trace()
+           plt.scatter(ind[0],ind.sciunitscore)
+        plt.hold(False)
+        plt.savefig('simple_function'+str(gen)+'.png')
+        #return optima_bf, xx, outf
+
+
+
     def uniform(low, up, size=None):
         '''
         This is the PRNG distribution that defines the initial
@@ -111,11 +133,14 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     def calc_error(individual, ff=FF):
         score=ff(individual[0])    
         individual.sciunitscore=score
+        #individual.stored_x=individual[0]
+        individual.stored_f_x=None
+            
         #print(individual.sciunitscore)
         return abs(0-score)
 
 
-    def sciunitjudge(individual,ff=FF,Previous_best=Previous_best):
+    def sciunitjudge(individual,ff=FF):#,Previous_best=Previous_best):
         '''
         sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
         ''' 
@@ -132,13 +157,13 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     toolbox.register("select", tools.selNSGA2)
     seed=1
     random.seed(seed)
-    NGEN = 6#250
+    NGEN = 105#250
     #Warning, the algorithm below is sensitive to certain muttiples in the population size
     #which is denoted by MU.
     #The mutiples of 100 work, many numbers will not work
     #TODO write a proper exception handling method.
     #TODO email the DEAP list about this issue too.
-    MU = 200#population size
+    MU = 12#population size
     CXPB = 0.9#cross over probability
 
     stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -164,6 +189,8 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     # This is just to assign the crowding distance to the individuals
     # no actual selection is done
     pop = toolbox.select(pop, len(pop))
+    gen=0
+    error_surface(pop,gen,ff=FF)
     
     record = stats.compile(pop)
     logbook.record(gen=0, evals=len(invalid_ind), **record)
@@ -190,11 +217,12 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
             ind.fitness.values = fit
 
         # Select the next generation population
-        pop = toolbox.select(pop + offspring, MU)
+        #was this: pop = toolbox.select(pop + offspring, MU)
+        pop = toolbox.select(offspring, MU)
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
-    
+        error_surface(pop,gen,ff=FF)
            #(best_params, best_score, model)
     return (pop[0][0],pop[0].sciunitscore,ff)
 
