@@ -131,14 +131,18 @@ def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
     def calc_error(individual, ff=FF):
-        score=ff(individual[0])    
+        value=ff(individual[0])  
+        score=1/value #the larger the return value the smaller the error, always.
+        #the more positive a number the smaller the error.
+        #may need to correct for negative values with a minus sign some how.
         individual.sciunitscore=score
         #individual.stored_x=individual[0]
         individual.stored_f_x=None
             
         #print(individual.sciunitscore)
-        return abs(0-score)
-
+        
+		#return abs(0-score)
+		return 
 
     def sciunitjudge(individual,ff=FF):#,Previous_best=Previous_best):
         '''
