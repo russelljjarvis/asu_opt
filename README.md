@@ -12,6 +12,15 @@ navigate to the this trunk directory, and mount this directory as a local file s
 
 The following  line has only been tested in Ubuntu linux, and has not been tested with OSX
 
+
+Just build the image and run the python code via the image:
+
+sudo docker build -t deapscoop1 . 
+sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash
+
+
+Interactive Development and Monkey patching:
+
 ```docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt para-nrn-python bash```
 ```docker run -v `pwd`:/home/mnt -it deap_build```
 
