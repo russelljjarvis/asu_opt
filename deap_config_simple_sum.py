@@ -16,7 +16,7 @@ from deap import benchmarks
 #from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
-
+from inspyred.ec import terminators as term
 
 class deap_capsule:
     '''
@@ -207,6 +207,10 @@ class deap_capsule:
             error_surface(pop,gen,ff=self.ff)
             # Gather all the fitnesses in one list and print the stats
             fits = [ind.fitness.values[0] for ind in pop]
+            #TODO terminate DEAP learning when the population converges to save computation 
+            #this will probably involve using term as defined by the import statement above.
+            #To be specific using term attributes in a conditional that evaluates to break if true.
+            
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
