@@ -30,7 +30,7 @@ Other commands that are useful for interactive Development and Monkey patching:
 Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
 `ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.
  
-Its probably to edit the file on the host system if powerful graphical editors are your thing.
+Its probably better to edit the file on the host system if powerful graphical editors are your thing.
 
 To run with scoop (in parallel, note this is actually slower for small dimensional problems with small `NGEN`, and population size, since parallel programs involve interprocess communication related costs).
 
@@ -40,6 +40,5 @@ execute:
 To run the simple linear sum example use:
 `python -i simple.py`
 This example doesn't actually have multiple objective functions, however extending the example such that it is multiobjective should be straight forward.
-
 
 You can also uncomment the appropriate line in the Dockerfile to run scoop.
