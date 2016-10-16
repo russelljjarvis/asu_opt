@@ -7,18 +7,31 @@ RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependen
 RUN pip install git+https://github.com/soravux/scoop
 RUN pip install git+https://github.com/DEAP/deap
 
-RUN echo "hack clean build this small fraction"
-RUN echo $USER 
-WORKDIR /home/jovyan/git
-RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+
+
+#RUN echo "hack clean build this small fraction"
+#RUN echo $USER 
 
 USER root
+
+WORKDIR /home/jovyan/git
+RUN git clone https://github.com/rgerkin/IzhikevichModel.git
+
+WORKDIR /home/jovyan/git
+RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+WORKDIR /home/jovyan/git/sciunitopt
+
+RUN cp -r $HOME/git/IzhikevichModel/* .
+
+#I prefer to have password less sudo since it permits me 
+#to quickly and easily modify the system interactively post dockerbuild.
+
 RUN apt-get update \
       && apt-get install -y sudo \
       && rm -rf /var/lib/apt/lists/*
 RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 
-RUN sudo chown -R jovyan $HOME
+RUN chown -R jovyan $HOME
 
 USER $NB_USER
 
