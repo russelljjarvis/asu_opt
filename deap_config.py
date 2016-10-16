@@ -12,22 +12,35 @@ from scoop import futures
 from deap import algorithms
 from deap import base
 from deap import benchmarks
-from deap.benchmarks.tools import diversity, convergence, hypervolume
+#from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
 
 
 
-OBJ_SIZE = 1 #single weighted objective function.
-NDIM = 1 #single dimensional optimization problem
+#OBJ_SIZE = 1 #single weighted objective function.
+#NDIM = 1 #single dimensional optimization problem
 
 class deap_capsule:
-    def __init__(self,ff, *args):
+    def __init__(self,ff,range_of_values=None, *args):
         self.ff=ff
         self.tb = base.Toolbox()
+        self.ngen=None
+        self.pop_size=None
 
 
-    def sciunit_optimize(self,ff,range_of_values=None,seed_in=1):
+    def sciunit_optimize(self,ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
+        self.ngen = ngen#250
+        #Warning, the algorithm below is sensitive to certain muttiples in the population size
+        #which is denoted by MU.
+        #The mutiples of 100 work, many numbers will not work
+        #TODO write a proper exception handling method.
+        #TODO email the DEAP list about this issue too.        
+        #TODO refactor MU into pop_size 
+        self.pop_size=pop_size#population size
+        '''
+        range_of_values is not implemented yet, but easily implemented.
+        '''
         toolbox = base.Toolbox()
         creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
         creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
@@ -123,13 +136,7 @@ class deap_capsule:
         toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
         toolbox.register("select", tools.selNSGA2)
         random.seed(seed_in)
-        NGEN = 105#250
-        #Warning, the algorithm below is sensitive to certain muttiples in the population size
-        #which is denoted by MU.
-        #The mutiples of 100 work, many numbers will not work
-        #TODO write a proper exception handling method.
-        #TODO email the DEAP list about this issue too.
-        MU = 12#population size
+       
         CXPB = 0.9#cross over probability
 
         stats = tools.Statistics(lambda ind: ind.fitness.values)
@@ -141,7 +148,7 @@ class deap_capsule:
         logbook = tools.Logbook()
         logbook.header = "gen", "evals", "std", "min", "avg", "max"
 
-        pop = toolbox.population(n=MU)
+        pop = toolbox.population(n=self.pop_size)
 
 
         # Evaluate the individuals with an invalid fitness

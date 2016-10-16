@@ -12,7 +12,7 @@ from scoop import futures
 from deap import algorithms
 from deap import base
 from deap import benchmarks
-from deap.benchmarks.tools import diversity, convergence, hypervolume
+#from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
 
@@ -62,8 +62,8 @@ class model():
 
 	
 
-OBJ_SIZE = 1 #single weighted objective function.
-NDIM = 1 #single dimensional optimization problem
+#OBJ_SIZE = 1 #single weighted objective function.
+#NDIM = 1 #single dimensional optimization problem
 
 
 #def ff(xx):
@@ -88,12 +88,13 @@ class Test:
         #call to the GA.
         #import deap_config
         from deap_config_simple_sum import deap_capsule
+        #ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1
         dc=deap_capsule(self.ff)
-                                          #sciunit_optimize(ff=FF,range_of_values=None,seed_in=1)
-                                          #ff,, *args)
+        #sciunit_optimize(ff=FF,range_of_values=None,seed_in=1)
+        #ff,, *args)
         pop_size=12
-        ngen=10                                  
-        best_params, best_score, model =dc.sciunit_optimize(self.ff,self.range_of_values,pop_size,ngen,NDIM=1,OBJ_SIZE=1)
+        ngen=20                                  
+        best_params, best_score, model =dc.sciunit_optimize(self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=self.range_of_values)
         return (best_params, best_score, model)
 
   

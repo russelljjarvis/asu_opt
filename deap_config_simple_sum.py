@@ -13,7 +13,7 @@ from scoop import futures
 from deap import algorithms
 from deap import base
 from deap import benchmarks
-from deap.benchmarks.tools import diversity, convergence, hypervolume
+#from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
 
@@ -22,19 +22,24 @@ class deap_capsule:
     '''
     Just a container for hiding implementation, not a very sophisticated one at that.
     '''
-    def __init__(self,ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1, range_of_values=None,*args):
+    def __init__(self,ff, range_of_values=None,*args):
         self.ff=ff
         self.tb = base.Toolbox()
-        NGEN = ngen#250
-        MU = pop_size#population size
+        self.ngen=None
+        self.pop_size=None
         #Warning, the algorithm below is sensitive to certain multiples in the population size
         #which is denoted by MU.
         #The mutiples of 100 work, many numbers will not work
         #TODO write a proper exception handling method.
         #TODO email the DEAP list about this issue too.        
         #TODO refactor MU into pop_size 
-    
-  def sciunit_optimize(ff=FF,range_of_values=None,seed=None):
+                             #self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,self.range_of_values
+    def sciunit_optimize(self,ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
+    #def sciunit_optimize(ff=self.ff,range_of_values=None,seed=None):
+        
+        self.ngen = ngen#250
+        self.pop_size = pop_size#population size
+        
         toolbox = base.Toolbox()
         creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
         creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
@@ -86,6 +91,8 @@ class deap_capsule:
             except TypeError:
                 return [random.uniform(a, b) for a, b in zip([low] * size, [up] * size)]
 
+
+        #TODO make range_of_values a parameter of the main class method.
         range_of_values=np.linspace(-170,170,10000)
         BOUND_LOW=np.min(range_of_values)
         BOUND_UP=np.max(range_of_values)
@@ -109,11 +116,10 @@ class deap_capsule:
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
             individual.sciunitscore=score
-            #individual.stored_f_x=None
             return score    
 
 
-        def sciunitjudge(individual,ff=FF):#,Previous_best=Previous_best):
+        def sciunitjudge(individual,ff=self.ff):#,Previous_best=Previous_best):
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
@@ -149,7 +155,7 @@ class deap_capsule:
         logbook.header = "gen", "evals", "std", "min", "avg", "max"
 
 
-        pop = toolbox.population(n=MU)
+        pop = toolbox.population(n=self.pop_size)
         
         print("Start of evolution")
         
@@ -160,7 +166,7 @@ class deap_capsule:
         print("Evaluated individuals",len(pop))
 
         # Begin the evolution
-        for g in range(NGEN):
+        for g in range(self.ngen):
             gen=g#TODO refactor 
             print("-- Generation %i --" % g)
             
@@ -198,12 +204,12 @@ class deap_capsule:
             
             # The population is entirely replaced by the offspring
             pop[:] = offspring
-            error_surface(pop,gen,ff=FF)
+            error_surface(pop,gen,ff=self.ff)
             # Gather all the fitnesses in one list and print the stats
             fits = [ind.fitness.values[0] for ind in pop]
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
-        error_surface(pop,gen,ff=FF)
+        error_surface(pop,gen,ff=self.ff)
         return (pop[0][0],pop[0].sciunitscore,ff)
 
