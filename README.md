@@ -2,6 +2,9 @@ The output of this program is a series of png images. Each file names is indexed
 
 The program can be run with or without scoop (see more on that below).
 
+
+The following  line has only been tested in Ubuntu linux, and has not been tested with OSX
+
 ## Instructions for building, deploying etc.
 
 To run this program first enter download the docker-stacks tree associated with the dev branch.
@@ -12,28 +15,29 @@ Instructions for getting the image are at the README.md
 
 Get the image corresponding to the build: neuronunit-scoop-deap
 
-navigate to the this trunk directory, and mount this directory as a local file system using:
-
-The following  line has only been tested in Ubuntu linux, and has not been tested with OSX
-
-
-Just build the image and run the python code via the image:
-
+Then build the Dockerfile in this directory which uses the docker-stacks as its foundation. You can use a command similar or the same as:
 `sudo docker build -t deapscoop1 .` 
+
+While you are in this directory mount it as a local file system and run the python code via the image:
+
 ```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
 
-Interactive Development and Monkey patching:
+Other commands that are useful for interactive Development and Monkey patching:
 
-```docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt para-nrn-python bash```
-```docker run -v `pwd`:/home/mnt -it deap_build```
+```docker run -v `pwd`:/home/mnt -it deapscoop1```, mounts local the local file system, without entering the image.
 
-Then navigate to `/home/mnt` and run the file `nsga2.py` with by executing:
-`ipython -i nsga2.py` 
 
-the `-i` flag facilitates monkey patching.
+```docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
+
+Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
+`ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.
+ 
+Its probably to edit the file on the host system if powerful graphical editors are your thing.
 
 To run with scoop (in parallel, note this is actually slower for small dimensional problems with small `NGEN`, and population size, since parallel programs involve interprocess communication related costs).
 
 execute:
 `python -m scoop nsga2.py`
+
+You can also uncomment the appropriate line in the Dockerfile to run scoop.
