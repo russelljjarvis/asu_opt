@@ -2,8 +2,7 @@ The output of this program is a series of png images. Each file names is indexed
 
 The program can be run with or without scoop (see more on that below).
 
-
-The following  line has only been tested in Ubuntu linux, and has not been tested with OSX
+The program in the Dockerfile build context has only been tested in Ubuntu linux, and has not been tested with OSX
 
 ## Instructions for building, deploying etc.
 
@@ -22,11 +21,9 @@ While you are in this directory mount it as a local file system and run the pyth
 
 ```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
-
 Other commands that are useful for interactive Development and Monkey patching:
 
 ```docker run -v `pwd`:/home/mnt -it deapscoop1```, mounts local the local file system, without entering the image.
-
 
 ```docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
@@ -39,5 +36,10 @@ To run with scoop (in parallel, note this is actually slower for small dimension
 
 execute:
 `python -m scoop nsga2.py`
+
+To run the simple linear sum example use:
+`python -i simple.py`
+This example doesn't actually have multiple objective functions, however extending the example such that it is multiobjective should be straight forward.
+
 
 You can also uncomment the appropriate line in the Dockerfile to run scoop.
