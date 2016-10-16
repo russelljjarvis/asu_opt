@@ -7,6 +7,7 @@ RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependen
 RUN pip install git+https://github.com/soravux/scoop
 RUN pip install git+https://github.com/DEAP/deap
 
+RUN echo "hack clean build this small fraction"
 RUN echo $USER 
 WORKDIR /home/jovyan/git
 RUN git clone https://github.com/russelljjarvis/sciunitopt.git
