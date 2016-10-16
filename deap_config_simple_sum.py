@@ -16,6 +16,8 @@ from deap import benchmarks
 #from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
+
+#Is inspyred what is crashing out matplotlib???
 from inspyred.ec import terminators as term
 
 class deap_capsule:
@@ -123,6 +125,9 @@ class deap_capsule:
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
+            from scoop.futures import scoop
+            print(scoop.utils.getHosts())
+            print(scoop.utils.cpu_count())
             assert type(individual[0])==float# protect input.            
             error=calc_error(individual, ff)#Previous_best,ff)
             return error, 

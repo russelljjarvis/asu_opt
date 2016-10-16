@@ -9,8 +9,7 @@ RUN pip install git+https://github.com/DEAP/deap
 
 
 
-#RUN echo "hack clean build this small fraction"
-#RUN echo $USER 
+RUN echo "hack clean build this small fraction"
 
 USER root
 
@@ -35,6 +34,12 @@ RUN apt-get update \
       && rm -rf /var/lib/apt/lists/*
 RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 
+
+#This is probably a nasty hack and a violation of the idea behind 
+#scipy-stacks, but I just trying to make stuff work quickly.
+
+RUN conda install -y matplotlib 
+
 RUN chown -R jovyan $HOME
 
 USER $NB_USER
@@ -46,7 +51,13 @@ RUN python -c "import scoop; import deap"
 
 
 WORKDIR /home/jovyan/git/sciunitopt
-ENTRYPOINT ipython -i simple.py
+
+# Wow ipython will not work because of matplotlib problem. Yet Jupyter notebooks work. What is wrong
+
+#does not work: ENTRYPOINT ipython -i simple.py
+
+
+ENTRYPOINT python -i simple.py
 
 #uncomment below to test nsga or to test with scoop
 
