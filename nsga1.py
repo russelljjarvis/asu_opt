@@ -85,10 +85,13 @@ class Test:
         best_score = None#-np.inf
         #call to the GA.
         #import deap_config
-        from deap_config import deap_capsule
+        from deap_config_nsga import deap_capsule
         dc=deap_capsule(self.ff)
                                           #sciunit_optimize(ff=FF,range_of_values=None,seed_in=1)
-        best_params, best_score, model =dc.sciunit_optimize(self.ff,self.range_of_values)
+                                          #ff,, *args)
+        pop_size=12
+        ngen=10                                  
+        best_params, best_score, model =dc.sciunit_optimize(self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,self.range_of_values)
         return (best_params, best_score, model)
   
 
