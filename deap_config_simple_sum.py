@@ -24,8 +24,9 @@ class deap_capsule:
     '''
     Just a container for hiding implementation, not a very sophisticated one at that.
     '''
-    def __init__(self,ff, range_of_values=None,*args):
+    def __init__(self,ff,gg,range_of_values=None,*args):
         self.ff=ff
+        self.gg=gg # a second dummy function to demonstrate multi objective.
         self.tb = base.Toolbox()
         self.ngen=None
         self.pop_size=None
@@ -36,7 +37,7 @@ class deap_capsule:
         #TODO email the DEAP list about this issue too.        
         #TODO refactor MU into pop_size 
                              #self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,self.range_of_values
-    def sciunit_optimize(self,ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
+    def sciunit_optimize(self,ff,gg,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
     #def sciunit_optimize(ff=self.ff,range_of_values=None,seed=None):
         
         self.ngen = ngen#250
@@ -74,9 +75,11 @@ class deap_capsule:
             import matplotlib.pyplot as plt
             plt.hold(True)
             plt.plot(xx,outf)
-            scatter_pop=np.array([ind for ind in pop])
+            scatter_pop=np.array([ind[0] for ind in pop])
             #note the error score is inverted bellow such that it aligns with the error surface.
             scatter_score=np.array([-ind.sciunitscore for ind in pop])
+
+            #pdb.set_trace()
             plt.scatter(scatter_pop,scatter_score)
             plt.hold(False)
             plt.savefig('simple_function'+str(gen)+'.png')
@@ -101,11 +104,12 @@ class deap_capsule:
 
 
         toolbox.register("map", futures.map)
+        assert NDIM==2
         toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
         toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
         toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-        def calc_error(individual, ff=self.ff):
+        def calc_errorf(individual, ff=self.ff):
             '''
             What follows is a rule for generating error functions that should be generalizable 
             to finding all global maximas.
@@ -120,16 +124,34 @@ class deap_capsule:
             individual.sciunitscore=score
             return score    
 
+        def calc_errorg(individual, gg=self.gg):
+            '''
+            What follows is a rule for generating error functions that should be generalizable 
+            to finding all global maximas.
+            '''
+            value=gg(individual[1])  
+            if value>0:
+               score = 1/value #the larger the return value the smaller the error, always.
+            elif value==0:
+               score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
+            elif value <0:
+               score = -(value+1)#the smaller the return value the larger the error, always.
+            individual.sciunitscore=score
+            return score    
 
-        def sciunitjudge(individual,ff=self.ff):#,Previous_best=Previous_best):
+
+
+        def sciunitjudge(individual,ff=self.ff,gg=self.gg):#,Previous_best=Previous_best):
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
-            from scoop.futures import scoop
+            #from scoop.futures import scoop
             print(scoop.utils.getHosts())
             print(scoop.utils.cpu_count())
             assert type(individual[0])==float# protect input.            
-            error=calc_error(individual, ff)#Previous_best,ff)
+            assert type(individual[1])==float# protect input.            
+            #Linear sum of errors, this is not what I recommend.
+            error=calc_errorf(individual, ff)+calc_errorg(individual, gg)#Previous_best,ff)
             return error, 
 
         #pdb.set_trace()
@@ -171,8 +193,8 @@ class deap_capsule:
         print("Evaluated individuals",len(pop))
 
         # Begin the evolution
-        for g in range(self.ngen):
-            gen=g#TODO refactor 
+        for gen in range(self.ngen):
+            g=gen#TODO refactor 
             print("-- Generation %i --" % g)
             
             # Select the next generation individuals

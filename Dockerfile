@@ -57,7 +57,7 @@ WORKDIR /home/jovyan/git/sciunitopt
 #does not work: ENTRYPOINT ipython -i simple.py
 
 
-ENTRYPOINT python -i simple.py
+#ENTRYPOINT python -i simple.py
 
 #uncomment below to test nsga or to test with scoop
 
