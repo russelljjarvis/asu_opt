@@ -59,8 +59,14 @@ class deap_capsule:
                 self.stored_x=None
                 self.sciunitscore=[0 for i in range(0,2)]
                 #SUS== sciunitscore.
-                self.sus0=None
-                self.sus1=None 
+                #cannot make the list type contain a nested list.
+                #use dictionary type as workaround.
+                self.sciunitscore={}
+                self.sciunitscore['0']=None
+                self.sciunitscore['1']=None
+
+                #self.sus0=None
+                #self.sus1=None 
             
         def error_surface(pop,gen,ff=self.ff):
             '''
@@ -124,6 +130,7 @@ class deap_capsule:
                score = -(value+1)#the smaller the return value the larger the error, always.
 
             individual.sus0=score
+            Individual.sciunitscore[0]=score
             
             #individual.stored_f_x=None                
             return score        
@@ -141,6 +148,8 @@ class deap_capsule:
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
             individual.sus1 =score
+            Individual.sciunitscore[1]=score
+
             return score  
 
 
