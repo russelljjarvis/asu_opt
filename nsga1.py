@@ -23,6 +23,8 @@ def sobf(ff):
   '''
   sciunit optimize via brute force.
   takes a function as an input returns the coordinates of an optima. 
+  
+  Not actually used.
   '''
   x_best = None
   y_best = -np.inf
@@ -53,18 +55,15 @@ def brute_force_optimize(ff):
 class model():
     '''
     A place holder class, not the real thing
+	Not actually used.
     '''
     def __init__(self):
         self.param_values=None
 
 	
 
-OBJ_SIZE = 1 #single weighted objective function.
-NDIM = 1 #single dimensional optimization problem
 
 
-#def ff(xx):
-#    return 3-(xx-2)**2
 
 
 
@@ -73,8 +72,8 @@ NDIM = 1 #single dimensional optimization problem
 
     
 class Test:
-    def __init__(self,ff,range_of_values):
-        self.ff = ff#place holder
+    def __init__(self,ff,gg,range_of_values):
+        #self.ff = ff#place holder
         self.range_of_values=range_of_values
     def judge(self,model=None):
         pass # already implemented, returns a score
@@ -86,12 +85,12 @@ class Test:
         #call to the GA.
         #import deap_config
         from deap_config_nsga import deap_capsule
-        dc=deap_capsule(self.ff)
+        dc=deap_capsule(ff,gg)
                                           #sciunit_optimize(ff=FF,range_of_values=None,seed_in=1)
                                           #ff,, *args)
         pop_size=12
         ngen=10                                  
-        best_params, best_score, model =dc.sciunit_optimize(self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,self.range_of_values)
+        best_params, best_score, model =dc.sciunit_optimize(ff,gg,pop_size,ngen,NDIM=2,OBJ_SIZE=2,self.range_of_values)
         return (best_params, best_score, model)
   
 
@@ -99,17 +98,19 @@ class Test:
 
 
 if __name__ == "__main__":
-    #The following line confuses scoop. It may want sciunit_optimize to be called main        
-    
-    def FF(xx): #hack make this a global scope variable
+   
+    def ff(xx): 
         return 3-(xx-2)**2
 
-    brute_force_optimize(FF)
+    def gg(xx): 
+        return 15-(xx-2)**6
+
+    brute_force_optimize(ff)
     #logbook,y,x=sciunit_optimize(ff,3)
     #best_params, best_score, model = sciunit_optimize(ff,3)
 
     range_of_values=np.linspace(-170,170,10000)
-    t=Test(FF,range_of_values)
+    t=Test(ff,gg,range_of_values)
     best_params, best_score, model=t.optimize()
     print('pareto front top value in pf hall of fame')
     print('best params',best_params,'best_score',best_score, 'model',model)

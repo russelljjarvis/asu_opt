@@ -22,8 +22,12 @@ from deap import tools
 #NDIM = 1 #single dimensional optimization problem
 
 class deap_capsule:
-    def __init__(self,ff,range_of_values=None, *args):
+    '''
+    Just a container for hiding implementation, not a very sophisticated one at that.
+    '''
+    def __init__(self,ff,gg,range_of_values=None,*args):
         self.ff=ff
+        self.gg=gg # a second dummy function to demonstrate multi objective.
         self.tb = base.Toolbox()
         self.ngen=None
         self.pop_size=None
@@ -49,8 +53,8 @@ class deap_capsule:
             def __init__(self, *args):
                 list.__init__(self, *args)
                 self.stored_x=None
-                self.stored_f_x=None
-                self.sciunitscore=None
+                #self.stored_f_x=None
+                self.sciunitscore=[]
             '''
             This object is used as one unit of chromosome or allele by DEAP.
             '''
@@ -72,7 +76,7 @@ class deap_capsule:
             import matplotlib.pyplot as plt
             plt.hold(True)
             plt.plot(xx,outf)
-            scatter_pop=np.array([ind for ind in pop])
+            scatter_pop=np.array([ind[0] for ind in pop])
             #note the error score is inverted bellow such that it aligns with the error surface.
             scatter_score=np.array([-ind.sciunitscore for ind in pop])
             plt.scatter(scatter_pop,scatter_score)
@@ -85,7 +89,7 @@ class deap_capsule:
         def uniform(low, up, size=None):
             '''
             This is the PRNG distribution that defines the initial
-            allele population inputs are the maximum and minimal numbers that the PRNG can generate.
+            allele population. Inputs are the maximum and minimal numbers that the PRNG can generate.
             '''
             try:
                 return [random.uniform(a, b) for a, b in zip(low, up)]
@@ -116,19 +120,38 @@ class deap_capsule:
                score = -(value+1)#the smaller the return value the larger the error, always.
 
 
-            individual.sciunitscore=score
+            individual.sciunitscore[0]=score
             
-            individual.stored_f_x=None
-                
-            return score
+            #individual.stored_f_x=None                
+            return score        
+
+        def calc_errorg(individual, gg=self.gg):
+            '''
+            What follows is a rule for generating error functions that should be generalizable 
+            to finding all global maximas.
+            '''
+            value=gg(individual[1])  
+            if value>0:
+               score = 1/value #the larger the return value the smaller the error, always.
+            elif value==0:
+               score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
+            elif value <0:
+               score = -(value+1)#the smaller the return value the larger the error, always.
+            individual.sciunitscore[1]=score
+            return score  
+
+
+
 
         def sciunitjudge(individual,ff=self.ff):#,Previous_best=Previous_best):
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
             assert type(individual[0])==float# protect input.            
-            error=calc_error(individual, ff)#Previous_best,ff)
-            return error, 
+            assert type(individual[1])==float# protect input.            
+            #In the NSGA version the error returned from objective function
+            #Needs to be a list or a tuple.
+            error=(calc_error(individual, ff),calc_errorg(individual, gg),)
 
         toolbox.register("evaluate",sciunitjudge)#,individual,ff,previous_best)
 
