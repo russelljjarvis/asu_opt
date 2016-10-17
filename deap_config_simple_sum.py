@@ -56,7 +56,9 @@ class deap_capsule:
                 list.__init__(self, *args)
                 self.stored_x=None
                 #self.stored_f_x=None
-                self.sciunitscore=None
+                self.sciunitscore=[]#(0,0)
+                self.sus0=None
+                self.sus1=None
             
         def error_surface(pop,gen,ff=self.ff):
             '''
@@ -77,7 +79,7 @@ class deap_capsule:
             plt.plot(xx,outf)
             scatter_pop=np.array([ind[0] for ind in pop])
             #note the error score is inverted bellow such that it aligns with the error surface.
-            scatter_score=np.array([-ind.sciunitscore for ind in pop])
+            scatter_score=np.array([-ind.sus0 for ind in pop])
 
             #pdb.set_trace()
             plt.scatter(scatter_pop,scatter_score)
@@ -89,7 +91,7 @@ class deap_capsule:
         def uniform(low, up, size=None):
             '''
             This is the PRNG distribution that defines the initial
-            allele population
+            allele population. Inputs are the maximum and minimal numbers that the PRNG can generate.
             '''
             try:
                 return [random.uniform(a, b) for a, b in zip(low, up)]
@@ -121,7 +123,8 @@ class deap_capsule:
                score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
-            individual.sciunitscore=score
+            #individual.sciunitscore.append(score)
+            individual.sus0=score
             return score    
 
         def calc_errorg(individual, gg=self.gg):
@@ -136,7 +139,8 @@ class deap_capsule:
                score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
-            individual.sciunitscore=score
+            #individual.sciunitscore[1]=score
+            individual.sus1=score
             return score    
 
 
@@ -242,5 +246,5 @@ class deap_capsule:
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
         error_surface(pop,gen,ff=self.ff)
-        return (pop[0][0],pop[0].sciunitscore,ff)
+        return (pop[0][0],pop[0].sus0,ff)
 

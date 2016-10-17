@@ -33,7 +33,7 @@ class deap_capsule:
         self.pop_size=None
 
 
-    def sciunit_optimize(self,ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
+    def sciunit_optimize(self,ff,gg,pop_size,ngen,NDIM=2,OBJ_SIZE=2,range_of_values=None,seed_in=1):
         self.ngen = ngen#250
         #Warning, the algorithm below is sensitive to certain muttiples in the population size
         #which is denoted by MU.
@@ -47,17 +47,20 @@ class deap_capsule:
         '''
         toolbox = base.Toolbox()
         creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
+
         creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
 
         class Individual(list):
-            def __init__(self, *args):
-                list.__init__(self, *args)
-                self.stored_x=None
-                #self.stored_f_x=None
-                self.sciunitscore=[]
             '''
             This object is used as one unit of chromosome or allele by DEAP.
             '''
+            def __init__(self, *args):
+                list.__init__(self, *args)
+                self.stored_x=None
+                self.sciunitscore=[0 for i in range(0,2)]
+                #SUS== sciunitscore.
+                self.sus0=None
+                self.sus1=None 
             
         def error_surface(pop,gen,ff=self.ff):
             '''
@@ -78,7 +81,7 @@ class deap_capsule:
             plt.plot(xx,outf)
             scatter_pop=np.array([ind[0] for ind in pop])
             #note the error score is inverted bellow such that it aligns with the error surface.
-            scatter_score=np.array([-ind.sciunitscore for ind in pop])
+            scatter_score=np.array([-ind.sus0 for ind in pop])
             plt.scatter(scatter_pop,scatter_score)
             plt.hold(False)
             plt.savefig('simple_function'+str(gen)+'.png')
@@ -87,6 +90,7 @@ class deap_capsule:
 
 
         def uniform(low, up, size=None):
+            assert size==2
             '''
             This is the PRNG distribution that defines the initial
             allele population. Inputs are the maximum and minimal numbers that the PRNG can generate.
@@ -119,8 +123,7 @@ class deap_capsule:
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
 
-
-            individual.sciunitscore[0]=score
+            individual.sus0=score
             
             #individual.stored_f_x=None                
             return score        
@@ -137,13 +140,13 @@ class deap_capsule:
                score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
-            individual.sciunitscore[1]=score
+            individual.sus1 =score
             return score  
 
 
 
 
-        def sciunitjudge(individual,ff=self.ff):#,Previous_best=Previous_best):
+        def sciunitjudge(individual,ff=self.ff,gg=self.gg):#,Previous_best=Previous_best):
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
@@ -151,13 +154,17 @@ class deap_capsule:
             assert type(individual[1])==float# protect input.            
             #In the NSGA version the error returned from objective function
             #Needs to be a list or a tuple.
-            error=(calc_error(individual, ff),calc_errorg(individual, gg),)
+            #pdb.set_trace()
 
+            print( calc_error(individual, ff),calc_errorg(individual, gg) )
+            error=( calc_error(individual, ff),calc_errorg(individual, gg) )
+            return error
         toolbox.register("evaluate",sciunitjudge)#,individual,ff,previous_best)
 
         toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
         toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
         toolbox.register("select", tools.selNSGA2)
+
         random.seed(seed_in)
        
         CXPB = 0.9#cross over probability
@@ -193,7 +200,7 @@ class deap_capsule:
         print(logbook.stream)
 
         # Begin the generational process
-        for gen in range(1, NGEN):
+        for gen in range(1,self.ngen):
             # Vary the population
             offspring = tools.selTournamentDCD(pop, len(pop))
             offspring = [toolbox.clone(ind) for ind in offspring]
@@ -214,11 +221,11 @@ class deap_capsule:
 
             # Select the next generation population
             #was this: pop = toolbox.select(pop + offspring, MU)
-            pop = toolbox.select(offspring, MU)
+            pop = toolbox.select(offspring, self.pop_size)
             record = stats.compile(pop)
             logbook.record(gen=gen, evals=len(invalid_ind), **record)
             print(logbook.stream)
             error_surface(pop,gen,ff=self.ff)
                #(best_params, best_score, model)
-        return (pop[0][0],pop[0].sciunitscore,ff)
+        return (pop[0][0],pop[0].sus0,ff)
 

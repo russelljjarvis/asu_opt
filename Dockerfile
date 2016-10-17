@@ -44,6 +44,8 @@ RUN chown -R jovyan $HOME
 
 USER $NB_USER
 
+
+#Check if anything broke
 RUN nrniv
 RUN python -c "import neuron; import sciunit; import neuronunit"
 RUN nrnivmodl 

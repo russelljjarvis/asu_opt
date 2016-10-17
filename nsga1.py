@@ -90,7 +90,11 @@ class Test:
                                           #ff,, *args)
         pop_size=12
         ngen=10                                  
-        best_params, best_score, model =dc.sciunit_optimize(ff,gg,pop_size,ngen,NDIM=2,OBJ_SIZE=2,self.range_of_values)
+        NDIM=2
+        OBJ_SIZE=2
+        range_of_values=self.range_of_values
+        seed_in=1
+        best_params, best_score, model =dc.sciunit_optimize(ff,gg,pop_size,ngen,NDIM,OBJ_SIZE,range_of_values)
         return (best_params, best_score, model)
   
 

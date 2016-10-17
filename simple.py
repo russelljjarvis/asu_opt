@@ -62,21 +62,13 @@ class model():
 
 	
 
-#OBJ_SIZE = 1 #single weighted objective function.
-#NDIM = 1 #single dimensional optimization problem
 
-
-#def ff(xx):
-#    return 3-(xx-2)**2
-
-def FF(xx): #hack make this a global scope variable
-    return 3-(xx-2)**2
 
  
 
 class Test:
     def __init__(self,ff,gg,range_of_values):
-        self.ff = ff#place holder
+        #self.ff = ff#place holder
         self.range_of_values=range_of_values
     def judge(self,model=None):
         pass # already implemented, returns a score
@@ -88,10 +80,10 @@ class Test:
         best_score = None#-np.inf
         #call to the GA.
         from deap_config_simple_sum import deap_capsule
-        dc=deap_capsule(self.ff,gg)
+        dc=deap_capsule(ff,gg)
         pop_size=12
         ngen=20                                  
-        best_params, best_score, model =dc.sciunit_optimize(self.ff,gg,pop_size,ngen,NDIM=2,OBJ_SIZE=2,range_of_values=self.range_of_values)
+        best_params, best_score, model =dc.sciunit_optimize(ff,gg,pop_size,ngen,NDIM=2,OBJ_SIZE=2,range_of_values=self.range_of_values)
         return (best_params, best_score, model)
 
   
@@ -100,8 +92,7 @@ if __name__ == "__main__":
    
     def ff(xx): 
         return 3-(xx-2)**2
-    #def ff(xx): 
-    #    return 3-(xx-2)**2
+
     def gg(xx): 
         return 15-(xx-2)**6
 
