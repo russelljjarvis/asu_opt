@@ -46,7 +46,7 @@ class deap_capsule:
         range_of_values is not implemented yet, but easily implemented.
         '''
         toolbox = base.Toolbox()
-        creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
+        creator.create("FitnessMax", base.Fitness, weights=(-1.0,-1.0,))#Final comma here, important, not a typo, must be a tuple type.
 
         creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
 
@@ -56,17 +56,14 @@ class deap_capsule:
             '''
             def __init__(self, *args):
                 list.__init__(self, *args)
-                self.stored_x=None
-                self.sciunitscore=[0 for i in range(0,2)]
+                #self.stored_x=None
+                #self.sciunitscore=[0 for i in range(0,2)]
                 #SUS== sciunitscore.
                 #cannot make the list type contain a nested list.
                 #use dictionary type as workaround.
-                self.sciunitscore={}
-                self.sciunitscore['0']=None
-                self.sciunitscore['1']=None
-
-                #self.sus0=None
-                #self.sus1=None 
+                
+                self.sus0=None
+                self.sus1=None 
             
         def error_surface(pop,gen,ff=self.ff):
             '''
@@ -87,7 +84,7 @@ class deap_capsule:
             plt.plot(xx,outf)
             scatter_pop=np.array([ind[0] for ind in pop])
             #note the error score is inverted bellow such that it aligns with the error surface.
-            scatter_score=np.array([-ind.sus0 for ind in pop])
+            scatter_score=np.array([-ind.sciunitscore[0] for ind in pop])
             plt.scatter(scatter_pop,scatter_score)
             plt.hold(False)
             plt.savefig('simple_function'+str(gen)+'.png')
@@ -115,7 +112,8 @@ class deap_capsule:
         toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
         toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-        def calc_error(individual, ff=self.ff):
+
+        def calc_errorf(individual, ff=self.ff):
             '''
             What follows is a rule for generating error functions that should be generalizable 
             to finding all global maximas.
@@ -129,8 +127,9 @@ class deap_capsule:
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
 
-            individual.sus0=score
-            Individual.sciunitscore[0]=score
+            #individual.sus0=score
+            #pdb.set_trace()
+            individual.sciunitscore[0]=score
             
             #individual.stored_f_x=None                
             return score        
@@ -147,8 +146,8 @@ class deap_capsule:
                score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
             elif value <0:
                score = -(value+1)#the smaller the return value the larger the error, always.
-            individual.sus1 =score
-            Individual.sciunitscore[1]=score
+            #individual.sus1 =score
+            individual.sciunitscore[1]=score
 
             return score  
 
@@ -165,8 +164,8 @@ class deap_capsule:
             #Needs to be a list or a tuple.
             #pdb.set_trace()
 
-            print( calc_error(individual, ff),calc_errorg(individual, gg) )
-            error=( calc_error(individual, ff),calc_errorg(individual, gg) )
+            print( calc_errorf(individual, ff),calc_errorg(individual, gg) )
+            error=( calc_errorf(individual, ff),calc_errorg(individual, gg) )
             return error
         toolbox.register("evaluate",sciunitjudge)#,individual,ff,previous_best)
 
@@ -188,7 +187,17 @@ class deap_capsule:
         logbook.header = "gen", "evals", "std", "min", "avg", "max"
 
         pop = toolbox.population(n=self.pop_size)
+        
 
+        #Its really stupid that a data type should have to be defined inside the container, after
+        #Its instanced, but I don't understand enough OOPython to know why, and or how to fix it.        
+        #blah=[ ind.sciunitscore={} for ind in pop ]
+        #ind.sciunitscore={} 
+
+
+        for ind in pop:
+            ind.sciunitscore={} 
+        
 
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in pop if not ind.fitness.valid]
@@ -201,6 +210,7 @@ class deap_capsule:
         # This is just to assign the crowding distance to the individuals
         # no actual selection is done
         pop = toolbox.select(pop, len(pop))
+
         gen=0
         error_surface(pop,gen,ff=self.ff)
         
@@ -236,5 +246,5 @@ class deap_capsule:
             print(logbook.stream)
             error_surface(pop,gen,ff=self.ff)
                #(best_params, best_score, model)
-        return (pop[0][0],pop[0].sus0,ff)
+        return (pop[0][0],pop[0].sciunitscore[0],ff)
 
