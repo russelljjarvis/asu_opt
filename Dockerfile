@@ -1,30 +1,28 @@
-FROM scidash/neuron-mpi-neuroml
+#FROM scidash/neuron-mpi-neuroml
+FROM scidash/neuronunit-scoop-deap
+
+#USER root
+#RUN pip install git+https://github.com/rgerkin/rickpy
+#RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
+#RUN pip install git+https://github.com/soravux/scoop
+#RUN pip install git+https://github.com/DEAP/deap
+#RUN echo "hack clean build this small fraction"
+#/home/jovyan/work/scipyopt/
 
 USER root
 
-RUN pip install git+https://github.com/rgerkin/rickpy
-RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
-RUN pip install git+https://github.com/soravux/scoop
-RUN pip install git+https://github.com/DEAP/deap
-
-
-
-RUN echo "hack clean build this small fraction"
-
-USER root
-
-WORKDIR /home/jovyan/git
+WORKDIR /home/jovyan/work/git
 RUN git clone https://github.com/rgerkin/IzhikevichModel.git
 
-WORKDIR /home/jovyan/git
+WORKDIR /home/jovyan/work/git
 RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 WORKDIR /home/jovyan/git/sciunitopt
 
-WORKDIR /home/jovyan/git
+WORKDIR /home/jovyan/work/git
 RUN pip install git+https://github.com/aarongarrett/inspyred
 
 
-RUN cp -r $HOME/git/IzhikevichModel/* .
+RUN cp -r $HOME/work/git/IzhikevichModel/* .
 
 #I prefer to have password less sudo since it permits me 
 #to quickly and easily modify the system interactively post dockerbuild.
@@ -52,7 +50,7 @@ RUN nrnivmodl
 RUN python -c "import scoop; import deap"
 
 
-WORKDIR /home/jovyan/git/sciunitopt
+WORKDIR /home/jovyan/work/git/sciunitopt
 
 # Wow ipython will not work because of matplotlib problem. Yet Jupyter notebooks work. What is wrong
 
