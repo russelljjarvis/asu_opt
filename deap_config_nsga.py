@@ -214,9 +214,14 @@ class deap_capsule:
         gen=0
         error_surface(pop,gen,ff=self.ff)
         
-        record = stats.compile(pop)
-        logbook.record(gen=0, evals=len(invalid_ind), **record)
-        print(logbook.stream)
+        #record = stats.compile(pop)
+        #logbook.record(gen=0, evals=len(invalid_ind), **record)
+        #print(logbook.stream)
+
+        stats_fit = tools.Statistics(key=lambda ind: ind.fitness.values)
+        stats_size = tools.Statistics(key=len)
+        mstats = tools.MultiStatistics(fitness=stats_fit, size=stats_size)
+        record = mstats.compile(pop)
 
         # Begin the generational process
         for gen in range(1,self.ngen):
@@ -241,10 +246,12 @@ class deap_capsule:
             # Select the next generation population
             #was this: pop = toolbox.select(pop + offspring, MU)
             pop = toolbox.select(offspring, self.pop_size)
-            record = stats.compile(pop)
-            logbook.record(gen=gen, evals=len(invalid_ind), **record)
-            print(logbook.stream)
+            
+            #logbook.record(gen=gen, evals=len(invalid_ind), **record)
+            #print(logbook.stream)
             error_surface(pop,gen,ff=self.ff)
                #(best_params, best_score, model)
+        print(record)
+        pdb.set_trace()       
         return (pop[0][0],pop[0].sciunitscore[0],ff)
 
