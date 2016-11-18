@@ -25,9 +25,9 @@ While you are in this directory mount it as a local file system and run the pyth
 
 Other commands that are useful for interactive Development and Monkey patching:
 
-```docker run -v `pwd`:/home/mnt -it deapscoop1```, mounts local the local file system, without entering the image.
+```sudo docker run -v `pwd`:/home/mnt -it deapscoop1```, mounts local the local file system, without entering the image.
 
-```docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
+```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
 Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
 `ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.

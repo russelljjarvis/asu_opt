@@ -11,6 +11,8 @@ FROM scidash/neuronunit-scoop-deap
 
 USER root
 
+
+
 WORKDIR /home/jovyan/work/git
 RUN git clone https://github.com/rgerkin/IzhikevichModel.git
 
@@ -20,6 +22,9 @@ WORKDIR /home/jovyan/git/sciunitopt
 
 WORKDIR /home/jovyan/work/git
 RUN pip install git+https://github.com/aarongarrett/inspyred
+
+WORKDIR /home/jovyan/work/git
+RUN pip install git+https://github.com/AllenInstitute/AllenSDK
 
 
 RUN cp -r $HOME/work/git/IzhikevichModel/* .
