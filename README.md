@@ -29,6 +29,8 @@ Other commands that are useful for interactive Development and Monkey patching:
 
 ```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
+sudo docker run -v `pwd`:/home/mnt -it deapscoop1 bash
+
 Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
 `ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.
  
@@ -44,3 +46,38 @@ To run the simple linear sum example use:
 This example doesn't actually have multiple objective functions, however extending the example such that it is multiobjective should be straight forward.
 
 You can also uncomment the appropriate line in the Dockerfile to run scoop.
+
+To interact with just the notebook
+```sudo docker run -d -p 8888:8888 -v `pwd`:/Users/jovyan deapscoop1```
+
+Then run
+jupyter-notebook --ip=* --no-browser
+
+
+https://alleninstitute.github.io/AllenSDK/install.html
+
+Ensure you have Docker installed.
+
+Use Docker to build the image one of the images.
+
+    Anaconda:
+
+    docker build --tag alleninstitute/allensdk:anaconda https://github.com/AllenInstitute/AllenSDK.git#v0.12.4:docker/anaconda
+
+    Other docker configurations are also available under docker directory in the source repository.
+
+Run the docker image:
+
+docker run -i -t -p 8888:8888 -v /data:/data alleninstitute/allensdk:anaconda /bin/bash
+cd allensdk
+make pytest_lax
+
+Start a Jupyter Notebook:
+
+cd allensdk/doc_template/examples/nb
+jupyter-notebook --ip=* --no-browser
+
+sudo docker run -it -v `pwd`:/home/jovyan/mnt deapscoop1 bash
+
+
+

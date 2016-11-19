@@ -24,7 +24,10 @@ WORKDIR /home/jovyan/work/git
 RUN pip install git+https://github.com/aarongarrett/inspyred
 
 WORKDIR /home/jovyan/work/git
-RUN pip install git+https://github.com/AllenInstitute/AllenSDK
+RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin
+
+
+#https://github.com/AllenInstitute/AllenSDK/tree/py34_rgerkin
 
 
 RUN cp -r $HOME/work/git/IzhikevichModel/* .
@@ -42,6 +45,8 @@ RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 #scipy-stacks, but I just trying to make stuff work quickly.
 
 RUN conda install -y matplotlib 
+
+RUN pip install pyneuroml
 
 RUN chown -R jovyan $HOME
 
