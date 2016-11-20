@@ -9,7 +9,7 @@ The program in the Dockerfile build context has only been tested in Ubuntu linux
 To run this program first enter download the [docker-stacks tree associated with the dev branch.](https://github.com/scidash/docker-stacks/tree/dev "Title").
 
 #To run this program first enter download the docker-stacks tree associated with the dev branch.
-#`https://github.com/scidash/docker-stacks/tree/dev`
+#https://github.com/scidash/docker-stacks/tree/dev`
 
 Instructions for getting the image are at the README.md
 

@@ -19,6 +19,9 @@ RUN pip install git+https://github.com/NeuroML/pyNeuroML --install-option="--pre
 WORKDIR /home/jovyan/work/git
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
 
+WORKDIR /home/jovyan/work/git
+#sudo pip3 install quantities
+RUN pip install git+https://github.com/python-quantities/python-quantities
 
 #WORKDIR /home/jovyan/work/scidash/pyNeuroML
 #RUN python setup.py
@@ -37,7 +40,7 @@ RUN pip install git+https://github.com/aarongarrett/inspyred
 
 
 
-
+RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
 RUN cp -r $HOME/work/git/IzhikevichModel/* .
 
 #I prefer to have password less sudo since it permits me 
@@ -54,9 +57,16 @@ RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 RUN conda install -y matplotlib 
 
-RUN pip install pyneuroml
+
 
 RUN chown -R jovyan $HOME
+#make some of the packages installed in /opt/.../site-packages development versions. By getting write access.
+#probably dodgy quick fix.
+RUN chown -R jovyan RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/neuronunit
+RUN chown -R jovyan RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/sciunit
+#make an alias to change to this directory more readily
+#possibly a better idea would be to make symbolic links to the files somewhere with a shorter pathl
+RUN CMD alias egg='cd /opt/conda/lib/python3.5/site-packages/'
 
 USER $NB_USER
 
