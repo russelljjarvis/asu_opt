@@ -66,7 +66,9 @@ RUN chown -R jovyan RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/n
 RUN chown -R jovyan RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/sciunit
 #make an alias to change to this directory more readily
 #possibly a better idea would be to make symbolic links to the files somewhere with a shorter pathl
+
 RUN CMD alias egg='cd /opt/conda/lib/python3.5/site-packages/'
+RUN sudo ln -s /opt/conda/lib/python3.5/site-packages/ ../python_code
 
 USER $NB_USER
 
