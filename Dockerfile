@@ -3,26 +3,23 @@ FROM scidash/neuronunit-scoop-deap
 
 USER root
 
-WORKDIR /home/jovyan/work/scidash/neuronunit
-RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
-
 #WORKDIR /home/jovyan/work/scidash/neuronunit
-#RUN python setup.py
-
-WORKDIR /home/jovyan/work/scidash/sciunit
-RUN pip install git+https://github.com/scidash/sciunit@dev --install-option="--prefix=$home/jovyan/work/scidash/sciunit" --process-dependency-links
+#RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
+#WORKDIR /home/jovyan/work/scidash/neuronunit
 #WORKDIR /home/jovyan/work/scidash/sciunit
-#RUN python setup.py
-WORKDIR /home/jovyan/work/scidash/pyNeuroML
-RUN pip install git+https://github.com/NeuroML/pyNeuroML --install-option="--prefix=$home/jovyan/work/scidash/pyNeuroML" --process-dependency-links
+#RUN pip install git+https://github.com/scidash/sciunit@dev --install-option="--prefix=$home/jovyan/work/scidash/sciunit" --process-dependency-links
+#WORKDIR /home/jovyan/work/scidash/sciunit
 
-WORKDIR /home/jovyan/work/git
+
+WORKDIR /home/jovyan/work/scidash/pyNeuroML
+RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
+
+WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
 
-WORKDIR /home/jovyan/work/git
+#WORKDIR /home/jovyan/work/git
 #sudo pip3 install quantities
-RUN pip install git+https://github.com/python-quantities/python-quantities
-
+#RUN pip install git+https://github.com/python-quantities/python-quantities
 #WORKDIR /home/jovyan/work/scidash/pyNeuroML
 #RUN python setup.py
 
@@ -62,13 +59,17 @@ RUN conda install -y matplotlib
 RUN chown -R jovyan $HOME
 #make some of the packages installed in /opt/.../site-packages development versions. By getting write access.
 #probably dodgy quick fix.
-RUN chown -R jovyan RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/neuronunit
-RUN chown -R jovyan RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/sciunit
+RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/neuronunit
+RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/sciunit
 #make an alias to change to this directory more readily
 #possibly a better idea would be to make symbolic links to the files somewhere with a shorter pathl
+#RUN CMD alias egg='cd /opt/conda/lib/python3.5/site-packages/'
+RUN sudo ln -s /opt/conda/lib/python3.5/site-packages/ $HOME/python_code
 
-RUN CMD alias egg='cd /opt/conda/lib/python3.5/site-packages/'
-RUN sudo ln -s /opt/conda/lib/python3.5/site-packages/ ../python_code
+RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
+RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
+RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
+
 
 USER $NB_USER
 
