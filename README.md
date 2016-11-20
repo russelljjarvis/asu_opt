@@ -1,7 +1,5 @@
 The output of this program is a series of png images. Each file names is indexed by iterations of generation. By clicking through the series of images you can watch a GA population converge around an optima of a trivial error function.
 
-Question: How do you know that the program is solving both objective functions when only one of them is plotted. Answer: Need to fix in the future, such a 2D matrix of the error surface is made. Such that each element of the matrix represents the simple linear sum f(x,y). 
-
 The program can be run with or without scoop (see more on that below).
 
 The program in the Dockerfile build context has only been tested in Ubuntu linux, and has not been tested with OSX
@@ -19,17 +17,17 @@ Get the image corresponding to the build: neuronunit-scoop-deap
 Then build the Dockerfile in this directory which uses the docker-stacks as its foundation. You can use a command similar or the same as:
 `sudo docker build -t deapscoop1 .` 
 
-While you are in this directory mount it as a local file system and run the python code via the image:
-
-```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
-
-Other commands that are useful for interactive Development and Monkey patching:
+# Other commands that are useful for interactive Development and Monkey patching:
 
 ```sudo docker run -v `pwd`:/home/mnt -it deapscoop1```, mounts local the local file system, without entering the image.
 
-```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
-sudo docker run -v `pwd`:/home/mnt -it deapscoop1 bash
+If your intention is not to run a notebook at all, but to develop inside the docker environment, you can use:
+```sudo docker run -it -v `pwd`:/home/jovyan/work/git deapscoop1 bash```
+
+Which may be equivalent to:
+```sudo docker run -v `pwd`:/home/jovyan/work/git -it deapscoop1 bash```
+
 
 Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
 `ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.
@@ -47,37 +45,28 @@ This example doesn't actually have multiple objective functions, however extendi
 
 You can also uncomment the appropriate line in the Dockerfile to run scoop.
 
-To interact with just the notebook
-```sudo docker run -d -p 8888:8888 -v `pwd`:/Users/jovyan deapscoop1```
-
-Then run
-jupyter-notebook --ip=* --no-browser
 
 
-https://alleninstitute.github.io/AllenSDK/install.html
 
-Ensure you have Docker installed.
+# One of several ways to invoke a locally based notebook:
 
-Use Docker to build the image one of the images.
+While you are in this directory mount it as a local file system and run the python code via the image:
 
-    Anaconda:
+```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
 
-    docker build --tag alleninstitute/allensdk:anaconda https://github.com/AllenInstitute/AllenSDK.git#v0.12.4:docker/anaconda
+Or equivalently:
 
-    Other docker configurations are also available under docker directory in the source repository.
+```sudo docker run -itp 8888:8888 -v `pwd`:/home/jovyan/work/git deapscoop1 /bin/bash```
 
-Run the docker image:
+The flag `-p` means use port `8888`. The flag `-i` means interactive. The flag `-v` means mount volume.
 
-docker run -i -t -p 8888:8888 -v /data:/data alleninstitute/allensdk:anaconda /bin/bash
-cd allensdk
-make pytest_lax
+From inside the docker image you can navigate to the appropriate directory. In this case its `/home/jovyan/work/git`, and then run the following command
+`jupyter-notebook --ip=* --no-browser`
 
-Start a Jupyter Notebook:
+Subsequently to see a list of all notebook(s) in the directory open the following URL in your browser:
+`http://localhost:8888/tree`
 
-cd allensdk/doc_template/examples/nb
-jupyter-notebook --ip=* --no-browser
-
-sudo docker run -it -v `pwd`:/home/jovyan/mnt deapscoop1 bash
+# Question: How do you know that the program is solving both objective functions when only one of them is plotted. Answer: Need to fix in the future, such a 2D matrix of the error surface is made. Such that each element of the matrix represents the simple linear sum f(x,y). 
 
 
 
