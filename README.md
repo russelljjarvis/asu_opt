@@ -28,6 +28,8 @@ If your intention is not to run a notebook at all, but to develop inside the doc
 Which may be equivalent to:
 ```sudo docker run -v `pwd`:/home/jovyan/work/git -it deapscoop1 bash```
 
+If the volume has already been mounted once, however you want to open a second terminal window into it:
+```sudo docker run -it deapscoop1 bash```
 
 Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
 `ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.
@@ -44,8 +46,6 @@ To run the simple linear sum example use:
 This example doesn't actually have multiple objective functions, however extending the example such that it is multiobjective should be straight forward.
 
 You can also uncomment the appropriate line in the Dockerfile to run scoop.
-
-
 
 
 # One of several ways to invoke a locally based notebook:
@@ -65,6 +65,7 @@ From inside the docker image you can navigate to the appropriate directory. In t
 
 Subsequently to see a list of all notebook(s) in the directory open the following URL in your browser:
 `http://localhost:8888/tree`
+
 
 # Question: How do you know that the program is solving both objective functions when only one of them is plotted. Answer: Need to fix in the future, such a 2D matrix of the error surface is made. Such that each element of the matrix represents the simple linear sum f(x,y). 
 
