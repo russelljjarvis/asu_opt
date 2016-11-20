@@ -1,33 +1,42 @@
-#FROM scidash/neuron-mpi-neuroml
 FROM scidash/neuronunit-scoop-deap
 
-#USER root
-#RUN pip install git+https://github.com/rgerkin/rickpy
-#RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
-#RUN pip install git+https://github.com/soravux/scoop
-#RUN pip install git+https://github.com/DEAP/deap
-#RUN echo "hack clean build this small fraction"
-#/home/jovyan/work/scipyopt/
 
 USER root
 
+WORKDIR /home/jovyan/work/scidash
+RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
+
+#WORKDIR /home/jovyan/work/scidash/neuronunit
+#RUN python setup.py
+
+WORKDIR /home/jovyan/work/scidash
+RUN pip install git+https://github.com/scidash/sciunit@dev --install-option="--prefix=$home/jovyan/work/scidash/sciunit" --process-dependency-links
+
+#WORKDIR /home/jovyan/work/scidash/sciunit
+#RUN python setup.py
+
+RUN pip install git+https://github.com/NeuroML/pyNeuroML --install-option="--prefix=$home/jovyan/work/scidash/pyNeuroML" --process-dependency-links
+
+WORKDIR /home/jovyan/work/git
+RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
+
+
+#WORKDIR /home/jovyan/work/scidash/pyNeuroML
+#RUN python setup.py
 
 
 WORKDIR /home/jovyan/work/git
 RUN git clone https://github.com/rgerkin/IzhikevichModel.git
 
-WORKDIR /home/jovyan/work/git
-RUN git clone https://github.com/russelljjarvis/sciunitopt.git
-WORKDIR /home/jovyan/git/sciunitopt
+#WORKDIR /home/jovyan/work/git
+#RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+#WORKDIR /home/jovyan/git/sciunitopt
 
 WORKDIR /home/jovyan/work/git
 RUN pip install git+https://github.com/aarongarrett/inspyred
 
-WORKDIR /home/jovyan/work/git
-RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin
 
 
-#https://github.com/AllenInstitute/AllenSDK/tree/py34_rgerkin
 
 
 RUN cp -r $HOME/work/git/IzhikevichModel/* .
