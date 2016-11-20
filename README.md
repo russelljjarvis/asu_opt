@@ -6,14 +6,16 @@ The program in the Dockerfile build context has only been tested in Ubuntu linux
 
 ## Instructions for building, deploying etc.
 
-To run this program first enter download the docker-stacks tree associated with the dev branch.
+To run this program first enter download the [docker-stacks tree associated with the dev branch.](https://github.com/scidash/docker-stacks/tree/dev "Title").
 
-`https://github.com/scidash/docker-stacks/tree/dev`
+#To run this program first enter download the docker-stacks tree associated with the dev branch.
+#`https://github.com/scidash/docker-stacks/tree/dev`
 
 Instructions for getting the image are at the README.md
 
 Get the image corresponding to the build: neuronunit-scoop-deap
 
+# Deploy
 Then build the Dockerfile in this directory which uses the docker-stacks as its foundation. You can use a command similar or the same as:
 `sudo docker build -t deapscoop1 .` 
 
@@ -23,13 +25,13 @@ Then build the Dockerfile in this directory which uses the docker-stacks as its 
 
 
 If your intention is not to run a notebook at all, but to develop inside the docker environment, you can use:
-```sudo docker run -it -v `pwd`:/home/jovyan/work/git deapscoop1 bash```
+```sudo docker run -it -v `pwd`:/home/mnt deapscoop1 bash```
 
 Which may be equivalent to:
-```sudo docker run -v `pwd`:/home/jovyan/work/git -it deapscoop1 bash```
+```sudo docker run -v `pwd`:/home/mnt -it deapscoop1 bash```
 
 If the volume has already been mounted once, however you want to open a second terminal window into it:
-```sudo docker run -it deapscoop1 bash```
+`sudo docker run -it deapscoop1 bash`
 
 Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
 `ipython -i nsga2.py`, where the `-i` flag facilitates monkey patching.
@@ -52,11 +54,11 @@ You can also uncomment the appropriate line in the Dockerfile to run scoop.
 
 While you are in this directory mount it as a local file system and run the python code via the image:
 
-```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work/scipyopt deapscoop1 bash```
+```sudo docker run -it -p 8888:8888 -v `pwd`:/home/jovyan/work deapscoop1 bash```
 
 Or equivalently:
 
-```sudo docker run -itp 8888:8888 -v `pwd`:/home/jovyan/work/git deapscoop1 /bin/bash```
+```sudo docker run -itp 8888:8888 -v `pwd`:/home/jovyan/work deapscoop1 /bin/bash```
 
 The flag `-p` means use port `8888`. The flag `-i` means interactive. The flag `-v` means mount volume.
 
