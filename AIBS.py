@@ -5,12 +5,13 @@
 
 import rickpy
 rickpy.use_dev_packages(['rickpy','scidash/sciunit','scidash/neuronunit','neuroml/pyNeuroML'])
+
 import imp
 imp.reload(rickpy);
 
 
 # In[2]:
-
+#from neuroml import pyNeuroML
 #get_ipython().magic('matplotlib notebook')
 import os,sys
 import numpy as np
@@ -19,6 +20,8 @@ import quantities as pq
 import sciunit
 import neuronunit
 from neuronunit import aibs
+dir()
+print(sys.path)
 from neuronunit.models.reduced import ReducedModel
 
 
@@ -32,19 +35,20 @@ LEMS_MODEL_PATH = os.path.join(HOME,'Dropbox/dev/osb/IzhikevichModel/NeuroML2/LE
 
 # In[21]:
 
-from neuronunit.capabilities import spike_functions
-waveforms = spike_functions.get_spike_waveforms(vm)
-np.max(waveforms.data,axis=1)
+vm=np.zeros(13)
+#from neuronunit.capabilities import spike_functions
+#waveforms = spike_functions.get_spike_waveforms(vm)
+#np.max(waveforms.data,axis=1)
 
 
 # In[23]:
 
-np.max(np.array(waveforms),axis=1)
+#np.max(np.array(waveforms),axis=1)
 
 
 # In[26]:
 
-np.max(waveforms,axis=1)
+#np.max(waveforms,axis=1)
 
 
 # In[4]:
@@ -52,6 +56,7 @@ np.max(waveforms,axis=1)
 import quantities as pq
 from neuronunit import tests as nu_tests, neuroelectro
 neuron = {'nlex_id': 'nifext_50'} # Layer V pyramidal cell
+
 tests = []
 
 dataset_id = 354190013  # Internal ID that AIBS uses for a particular Scnn1a-Tg2-Cre 
