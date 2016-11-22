@@ -69,6 +69,7 @@ RUN sudo ln -s /opt/conda/lib/python3.5/site-packages/ $HOME/python_code
 RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
 RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
+RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
 
 
 USER $NB_USER
@@ -95,3 +96,8 @@ WORKDIR /home/jovyan/work/git/sciunitopt
 #ENTRYPOINT python -i nsga2.py
 
 #ENTRYPOINT python -m scoop nsga2.py
+
+#export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64
+#Note the line below is required in order for jNeuroML to work inside pyNeuroML.
+ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64"
+

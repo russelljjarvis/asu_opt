@@ -3,25 +3,38 @@
 
 # In[1]:
 
-import rickpy
-rickpy.use_dev_packages(['rickpy','scidash/sciunit','scidash/neuronunit','neuroml/pyNeuroML'])
+def use_dev_packages(dev_packages,path):
+    """Prepends items in dev_packages to sys.path, and assumes there are in     
+    the user's HOME/Dropbox/dev directory.                                      
+    Format for dev_packages items is repo/package.                              
+    """
+    HOME = os.path.expanduser('~')
+    sp = os.path.join(HOME,'Dropbox/python3/lib/python3.4/site-packages')
+    if os.path.exists(sp) and sp not in sys.path:
+	    sys.path.append(sp)
+    for i,package in enumerate(dev_packages):
+        if package.split('/')[-1] not in sys.path[len(dev_packages)-i]:
+            sys.path.insert(1,os.path.join(HOME,'Dropbox/dev/',package))
+            
+    print('this method is not effective yet')
 
-import imp
-imp.reload(rickpy);
+import os, sys
+path=os.getcwd()
+use_dev_packages(['neuronunit','scidash/sciunit','neuroml/pyNeuroML'],path)
+
+
 
 
 # In[2]:
-#from neuroml import pyNeuroML
 #get_ipython().magic('matplotlib notebook')
-import os,sys
 import numpy as np
 import matplotlib.pyplot as plt
 import quantities as pq
 import sciunit
 import neuronunit
 from neuronunit import aibs
-dir()
-print(sys.path)
+import pdb
+
 from neuronunit.models.reduced import ReducedModel
 
 
@@ -30,12 +43,13 @@ from neuronunit.models.reduced import ReducedModel
 # Replace this with your model path.  
 # This example is from https://github.com/OpenSourceBrain/IzhikevichModel.
 HOME = os.path.expanduser('~')
-LEMS_MODEL_PATH = os.path.join(HOME,'Dropbox/dev/osb/IzhikevichModel/NeuroML2/LEMS_2007One.xml')
-
+LEMS_MODEL_PATH = os.path.join(os.getcwd(),'LEMS_2007One.xml')
+print(LEMS_MODEL_PATH)
+#pdb.set_trace()
 
 # In[21]:
 
-vm=np.zeros(13)
+#vm=np.zeros(13)
 #from neuronunit.capabilities import spike_functions
 #waveforms = spike_functions.get_spike_waveforms(vm)
 #np.max(waveforms.data,axis=1)
@@ -61,7 +75,59 @@ tests = []
 
 dataset_id = 354190013  # Internal ID that AIBS uses for a particular Scnn1a-Tg2-Cre 
                         # Primary visual area, layer 5 neuron.
-observation = aibs.get_observation(dataset_id,'rheobase')
+#observation = aibs.get_observation(dataset_id,'rheobase')
+from allensdk.api.queries.cell_types_api import CellTypesApi
+from allensdk.ephys.extract_cell_features import get_square_stim_characteristics,\
+                                                 get_sweep_from_nwb
+from allensdk.core import nwb_data_set
+from allensdk.core.cell_types_cache import CellTypesCache as ctc
+#exp_p=ctc.get_ephys_sweeps(dataset_id)
+
+#ctc = CellTypesCache()
+
+ct = CellTypesApi()
+experiment_params = ct.get_ephys_sweeps(dataset_id)
+cmd = ct.get_ephys_features(dataset_id)
+sweep_ids=cmd['rheobase_sweep_id'] #Retrieva all of the sweeps corresponding to finding rheobase.
+
+#found_exp=[]
+def get_sp(experiment_params,sweep_ids):
+    '''
+    get sweep parameter
+    '''
+    print('got into get sp')
+    print(type(experiment_params))
+
+    import pdb
+    sweep_num = None
+    for sp in experiment_params:
+       for i in sweep_ids:
+          if sp['id']==i:
+              sweep_num = sp['sweep_number']
+              found_sp=sp
+              break
+    if sweep_num is None:
+        found_sp=None          
+        raise Exception('Sweep with ID %d not found in dataset with ID %d.' % (sweep_id, dataset_id))
+    return found_sp
+
+
+def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
+    '''
+    return values
+    '''
+    print('got into get value dict')
+    if kind == str('rheobase'):
+        sp=get_sp(experiment_params,sweep_ids)
+        value = sp['stimulus_absolute_amplitude']
+        value = np.round(value,2) # Round to nearest hundredth of a pA.
+        value *= pq.pA # Apply units.  
+        return {'value': value}              
+              
+
+observation=get_value_dict(experiment_params,sweep_ids)
+
+
 tests += [nu_tests.RheobaseTest(observation=observation)]
     
 test_class_params = [(nu_tests.InputResistanceTest,None),
