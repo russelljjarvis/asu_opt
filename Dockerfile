@@ -1,32 +1,19 @@
 FROM scidash/neuronunit-scoop-deap
-
-
 USER root
-
 
 #The purpose of installing and removing is to get all of the right dependencies.
 RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=/home/jovyan/work/scidash/neuronunit" --process-dependency-links
-RUN rm -rf /opt/conda/lib/python3.5/site-packages/neuronunit
-RUN rm -rf neuronunit-0.1.8.5-py3.5.egg-info/
 
-RUN rm -rf /home/jovyan/work/scidash/neuronunit
-
-
-
-WORKDIR /home/jovyan/work/scidash
-
-RUN git clone https://github.com/russelljjarvis/neuronunit
+#RUN rm -rf /opt/conda/lib/python3.5/site-packages/neuronunit
+#RUN rm -rf neuronunit-0.1.8.5-py3.5.egg-info/
+#RUN rm -rf /home/jovyan/work/scidash/neuronunit
+#WORKDIR /home/jovyan/work/scidash
+#RUN git clone https://github.com/russelljjarvis/neuronunit
 #RUN git checkout dev
-
-RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages/neuronunit
-
-RUN python -c "import neuronunit;neuronunit.__file__"
-
+#RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages/neuronunit
+#RUN python -c "import neuronunit;neuronunit.__file__"
 #RUN ln -s /opt/conda/lib/python3.5/site-packages/neuronunit /home/jovyan/work/scidash/neuronunit/neuronunit
 #RUN python -c "import neuronunit"
-
-
-
 #WORKDIR /home/jovyan/work/scidash/sciunit
 #RUN pip install git+https://github.com/scidash/sciunit@dev --install-option="--prefix=$home/jovyan/work/scidash/sciunit" --process-dependency-links
 #WORKDIR /home/jovyan/work/scidash/sciunit
@@ -38,10 +25,11 @@ RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-li
 WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
 RUN python -c "import sciunit"
+RUN pip install git+https://github.com/python-quantities/python-quantities
+
 
 #WORKDIR /home/jovyan/work/git
 #sudo pip3 install quantities
-#RUN pip install git+https://github.com/python-quantities/python-quantities
 #WORKDIR /home/jovyan/work/scidash/pyNeuroML
 #RUN python setup.py
 
@@ -53,14 +41,11 @@ WORKDIR /home/jovyan/work/git
 RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 WORKDIR /home/jovyan/git/sciunitopt
 
-#Not presently used:
-#WORKDIR /home/jovyan/work/git
-#RUN pip install git+https://github.com/aarongarrett/inspyred
-
 
 
 
 RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
+RUN apt-get install pip3
 RUN cp -r $HOME/work/git/IzhikevichModel/* .
 
 #I prefer to have password less sudo since it permits me 
@@ -131,6 +116,11 @@ WORKDIR /home/jovyan/work/git/sciunitopt
 #export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64
 #Note the line below is required in order for jNeuroML to work inside pyNeuroML.
 
+
+
+#Not presently used:
+#WORKDIR /home/jovyan/work/git
+#RUN pip install git+https://github.com/aarongarrett/inspyred
 
 
 
