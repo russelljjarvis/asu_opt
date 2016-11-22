@@ -3,26 +3,8 @@
 
 # In[1]:
 
-def use_dev_packages(dev_packages,path):
-    """Prepends items in dev_packages to sys.path, and assumes there are in     
-    the user's HOME/Dropbox/dev directory.                                      
-    Format for dev_packages items is repo/package.                              
-    """
-    HOME = os.path.expanduser('~')
-    sp = os.path.join(HOME,'Dropbox/python3/lib/python3.4/site-packages')
-    if os.path.exists(sp) and sp not in sys.path:
-	    sys.path.append(sp)
-    for i,package in enumerate(dev_packages):
-        if package.split('/')[-1] not in sys.path[len(dev_packages)-i]:
-            sys.path.insert(1,os.path.join(HOME,'Dropbox/dev/',package))
-            
-    print('this method is not effective yet')
-
 import os, sys
 path=os.getcwd()
-#use_dev_packages(['neuronunit','scidash/sciunit','neuroml/pyNeuroML'],path)
-
-
 
 
 # In[2]:
@@ -45,7 +27,8 @@ from neuronunit.models.reduced import ReducedModel
 HOME = os.path.expanduser('~')
 LEMS_MODEL_PATH = os.path.join(os.getcwd(),'LEMS_2007One.xml')
 model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
-print(LEMS_MODEL_PATH)
+#print(LEMS_MODEL_PATH)
+
 
 # In[21]:
 
@@ -80,18 +63,12 @@ from allensdk.api.queries.cell_types_api import CellTypesApi
 from allensdk.ephys.extract_cell_features import get_square_stim_characteristics,\
                                                  get_sweep_from_nwb
 from allensdk.core import nwb_data_set
-#I would like to cache instead of downloading, but I don't know how.
-#from allensdk.core.cell_types_cache import CellTypesCache as ctc
-#exp_p=ctc.get_ephys_sweeps(dataset_id)
-
-#ctc = CellTypesCache()
 
 ct = CellTypesApi()
 experiment_params = ct.get_ephys_sweeps(dataset_id)
 cmd = ct.get_ephys_features(dataset_id)
 sweep_ids=cmd['rheobase_sweep_id'] #Retrieva all of the sweeps corresponding to finding rheobase.
 
-#found_exp=[]
 def get_sp(experiment_params,sweep_ids):
     '''
     get sweep parameter
@@ -118,10 +95,26 @@ def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
         value = sp['stimulus_absolute_amplitude']
         value = np.round(value,2) # Round to nearest hundredth of a pA.
         value *= pq.pA # Apply units.  
+        pdb.set_trace()
+        #Need some way to sanitise values.
+        #  
         return {'value': value}              
               
 
-observation=get_value_dict(experiment_params,sweep_ids)
+
+if os.path.exists("observation.pickle"):
+    with open('observation.pickle', 'rb') as handle:
+        observation = pickle.load(handle)
+
+else:
+    observation=get_value_dict(experiment_params,sweep_ids)
+    with open('observations.pickle', 'wb') as handle:
+        pickle.dump(observation, handle)
+
+
+
+
+
 
 
 tests += [nu_tests.RheobaseTest(observation=observation)]

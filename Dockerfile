@@ -6,8 +6,10 @@ USER root
 
 #The purpose of installing and removing is to get all of the right dependencies.
 RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=/home/jovyan/work/scidash/neuronunit" --process-dependency-links
-RUN rm -r /opt/conda/lib/python3.5/site-packages/neuronunit
-RUN rm -r /home/jovyan/work/scidash/neuronunit
+RUN rm -rf /opt/conda/lib/python3.5/site-packages/neuronunit
+RUN rm -rf neuronunit-0.1.8.5-py3.5.egg-info/
+
+RUN rm -rf /home/jovyan/work/scidash/neuronunit
 
 
 
@@ -94,7 +96,7 @@ RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
 RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64"' >> ~/.bashrc
-
+RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
 
 USER $NB_USER
 
