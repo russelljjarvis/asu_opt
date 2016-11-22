@@ -66,7 +66,8 @@ Subsequently to see a list of all notebook(s) in the directory open the followin
 `http://localhost:8888/tree`
 
 
-# Question: How do you know that the program is solving both objective functions when only one of them is plotted. Answer: Need to fix in the future, such a 2D matrix of the error surface is made. Such that each element of the matrix represents the simple linear sum f(x,y). 
+# Question:
+How do you know that the program is solving both objective functions when only one of them is plotted. Answer: Need to fix in the future, such a 2D matrix of the error surface is made. Such that each element of the matrix represents the simple linear sum f(x,y). 
 
 
 
