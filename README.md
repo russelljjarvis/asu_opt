@@ -58,7 +58,7 @@ While you are in this directory mount it as a local file system and run the pyth
 
 Or equivalently:
 
-```sudo docker run -itp 8888:8888 -v `pwd`:/home/jovyan/work deapscoop1 /bin/bash```
+```sudo docker run -itp 8888:8888 -v `pwd`:/home/mnt deapscoop1 /bin/bash```
 
 The flag `-p` means use port `8888`. The flag `-i` means interactive. The flag `-v` means mount volume.
 
