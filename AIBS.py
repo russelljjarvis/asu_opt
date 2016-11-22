@@ -20,7 +20,7 @@ def use_dev_packages(dev_packages,path):
 
 import os, sys
 path=os.getcwd()
-use_dev_packages(['neuronunit','scidash/sciunit','neuroml/pyNeuroML'],path)
+#use_dev_packages(['neuronunit','scidash/sciunit','neuroml/pyNeuroML'],path)
 
 
 
@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 import quantities as pq
 import sciunit
 import neuronunit
-from neuronunit import aibs
+#from neuronunit import aibs
 import pdb
 
 from neuronunit.models.reduced import ReducedModel
@@ -44,13 +44,13 @@ from neuronunit.models.reduced import ReducedModel
 # This example is from https://github.com/OpenSourceBrain/IzhikevichModel.
 HOME = os.path.expanduser('~')
 LEMS_MODEL_PATH = os.path.join(os.getcwd(),'LEMS_2007One.xml')
+model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
 print(LEMS_MODEL_PATH)
-#pdb.set_trace()
 
 # In[21]:
 
 #vm=np.zeros(13)
-#from neuronunit.capabilities import spike_functions
+from neuronunit.capabilities import spike_functions
 #waveforms = spike_functions.get_spike_waveforms(vm)
 #np.max(waveforms.data,axis=1)
 
@@ -80,7 +80,8 @@ from allensdk.api.queries.cell_types_api import CellTypesApi
 from allensdk.ephys.extract_cell_features import get_square_stim_characteristics,\
                                                  get_sweep_from_nwb
 from allensdk.core import nwb_data_set
-from allensdk.core.cell_types_cache import CellTypesCache as ctc
+#I would like to cache instead of downloading, but I don't know how.
+#from allensdk.core.cell_types_cache import CellTypesCache as ctc
 #exp_p=ctc.get_ephys_sweeps(dataset_id)
 
 #ctc = CellTypesCache()
@@ -95,10 +96,6 @@ def get_sp(experiment_params,sweep_ids):
     '''
     get sweep parameter
     '''
-    print('got into get sp')
-    print(type(experiment_params))
-
-    import pdb
     sweep_num = None
     for sp in experiment_params:
        for i in sweep_ids:
@@ -116,7 +113,6 @@ def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
     '''
     return values
     '''
-    print('got into get value dict')
     if kind == str('rheobase'):
         sp=get_sp(experiment_params,sweep_ids)
         value = sp['stimulus_absolute_amplitude']

@@ -3,17 +3,25 @@ FROM scidash/neuronunit-scoop-deap
 
 USER root
 
-#WORKDIR /home/jovyan/work/scidash/neuronunit
-#RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
-#WORKDIR /home/jovyan/work/scidash/neuronunit
-#RUN ln -s e/jovyan/work/scidash/neuronunit PATH
+
+#The purpose of installing and removing is to get all of the right dependencies.
+RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=/home/jovyan/work/scidash/neuronunit" --process-dependency-links
+RUN rm -r /opt/conda/lib/python3.5/site-packages/neuronunit
+RUN rm -r /home/jovyan/work/scidash/neuronunit
 
 
-RUN pip install git+https://github.com/russelljjarvis/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
-#Undo some of Richards nice work.
-#RUN rm -r /opt/conda/lib/python3.5/site-packages/neuronunit
-WORKDIR /home/jovyan/work/scidash/neuronunit
-RUN ln -s neuronunit /opt/conda/lib/python3.5/site-packages
+
+WORKDIR /home/jovyan/work/scidash
+
+RUN git clone https://github.com/russelljjarvis/neuronunit
+#RUN git checkout dev
+
+RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages/neuronunit
+
+RUN python -c "import neuronunit;neuronunit.__file__"
+
+#RUN ln -s /opt/conda/lib/python3.5/site-packages/neuronunit /home/jovyan/work/scidash/neuronunit/neuronunit
+#RUN python -c "import neuronunit"
 
 
 
@@ -27,6 +35,7 @@ RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-li
 
 WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
+RUN python -c "import sciunit"
 
 #WORKDIR /home/jovyan/work/git
 #sudo pip3 install quantities
@@ -42,8 +51,9 @@ WORKDIR /home/jovyan/work/git
 RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 WORKDIR /home/jovyan/git/sciunitopt
 
-WORKDIR /home/jovyan/work/git
-RUN pip install git+https://github.com/aarongarrett/inspyred
+#Not presently used:
+#WORKDIR /home/jovyan/work/git
+#RUN pip install git+https://github.com/aarongarrett/inspyred
 
 
 
@@ -60,8 +70,6 @@ RUN apt-get update \
 RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 
-#This is probably a nasty hack and a violation of the idea behind 
-#scipy-stacks, but I just trying to make stuff work quickly.
 
 RUN conda install -y matplotlib 
 
@@ -77,12 +85,15 @@ RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/sciunit
 #make an alias to change to this directory more readily
 #possibly a better idea would be to make symbolic links to the files somewhere with a shorter pathl
 #RUN CMD alias egg='cd /opt/conda/lib/python3.5/site-packages/'
-RUN sudo ln -s /opt/conda/lib/python3.5/site-packages/ $HOME/python_code
+
+
+#RUN sudo ln -s /opt/conda/lib/python3.5/site-packages/ $HOME/python_code
 
 RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
 RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
+RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64"' >> ~/.bashrc
 
 
 USER $NB_USER
@@ -90,10 +101,14 @@ USER $NB_USER
 
 #Check if anything broke
 RUN nrniv
+#Line below Not a fair test unless I can supply /tmp/vanilla.xml
+#RUN java -Xmx400M  -Djava.awt.headless=true -jar  "/opt/conda/lib/python3.5/site-packages/pyneuroml/lib/jNeuroML-0.8.0-jar-with-dependencies.jar"  "/tmp/vanilla.xml" -neuron -#run -nogui
+ 
+RUN python -c "import neuron; import sciunit"# import neuronunit
+
 RUN python -c "import neuron; import sciunit; import neuronunit"
 RUN nrnivmodl 
 RUN python -c "import scoop; import deap"
-RUN java -Xmx400M  -Djava.awt.headless=true -jar  "/opt/conda/lib/python3.5/site-packages/pyneuroml/lib/jNeuroML-0.8.0-jar-with-dependencies.jar"  "/tmp/vanilla.xml"  -neuron -run -nogui
 
 
 WORKDIR /home/jovyan/work/git/sciunitopt
