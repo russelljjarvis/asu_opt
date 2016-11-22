@@ -15,6 +15,7 @@ import quantities as pq
 import sciunit
 import neuronunit
 #from neuronunit import aibs
+import pickle
 import pdb
 
 from neuronunit.models.reduced import ReducedModel
@@ -27,6 +28,9 @@ from neuronunit.models.reduced import ReducedModel
 HOME = os.path.expanduser('~')
 LEMS_MODEL_PATH = os.path.join(os.getcwd(),'LEMS_2007One.xml')
 model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
+
+
+
 #print(LEMS_MODEL_PATH)
 
 
@@ -65,13 +69,11 @@ from allensdk.ephys.extract_cell_features import get_square_stim_characteristics
 from allensdk.core import nwb_data_set
 
 ct = CellTypesApi()
-experiment_params = ct.get_ephys_sweeps(dataset_id)
-cmd = ct.get_ephys_features(dataset_id)
-sweep_ids=cmd['rheobase_sweep_id'] #Retrieva all of the sweeps corresponding to finding rheobase.
 
 def get_sp(experiment_params,sweep_ids):
     '''
     get sweep parameter
+    TODO: move method into neuronunit/aibs.py, as this is a fix for that file.    
     '''
     sweep_num = None
     for sp in experiment_params:
@@ -89,28 +91,41 @@ def get_sp(experiment_params,sweep_ids):
 def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
     '''
     return values
+    TODO: move method into neuronunit/aibs.py, as this is a fix for that file.
     '''
     if kind == str('rheobase'):
         sp=get_sp(experiment_params,sweep_ids)
         value = sp['stimulus_absolute_amplitude']
         value = np.round(value,2) # Round to nearest hundredth of a pA.
         value *= pq.pA # Apply units.  
-        pdb.set_trace()
+        #pdb.set_trace()
         #Need some way to sanitise values.
         #  
         return {'value': value}              
               
 
 
-if os.path.exists("observation.pickle"):
-    with open('observation.pickle', 'rb') as handle:
+#save some time by pickle loading the content if its available. 
+#using allensdk cache would be preferable, but I don't yet understand the syntax.
+
+#with open('observation.pickle', 'rb') as handle:
+#    observation = pickle.load(handle)
+
+if os.path.exists(str(os.getcwd())+"/observations.pickle"):
+    print('attempting to recover from pickled file')
+    with open('observations.pickle', 'rb') as handle:
         observation = pickle.load(handle)
 
 else:
+    print('checked path:')
+    print(str(os.getcwd())+"/observation.pickle")
+    print('no pickled file down loading time intensive')
+    experiment_params = ct.get_ephys_sweeps(dataset_id)
+    cmd = ct.get_ephys_features(dataset_id)
+    sweep_ids=cmd['rheobase_sweep_id'] #Retrieva all of the sweeps corresponding to finding rheobase.
     observation=get_value_dict(experiment_params,sweep_ids)
     with open('observations.pickle', 'wb') as handle:
         pickle.dump(observation, handle)
-
 
 
 
@@ -130,13 +145,32 @@ test_class_params = [(nu_tests.InputResistanceTest,None),
 for cls,params in test_class_params:
     observation = cls.neuroelectro_summary_observation(neuron)
     tests += [cls(observation,params=params)]
+
+'''
+if os.path.exists(str(os.getcwd())+"/tests.pickle"):
+    print('attempting to recover from pickled file')
+    with open('tests.pickle', 'rb') as handle:
+        tests = pickle.load(handle)
+
+else:
+    print('checked path:')
+    print(str(os.getcwd())+"/tests.pickle")
+    print('no pickled file down loading time intensive')
+    with open('tests.pickle', 'wb') as handle:
+        pickle.dump(tests, handle)
+'''
+
     
 def update_amplitude(test,tests,score):
     rheobase = score.prediction['value']
     for i in [3,4,5]:
         tests[i].params['injected_square_current']['amplitude'] = rheobase*1.01 # Set current injection to just suprathreshold
+
+print('I suspect this that causes the syntax problem 1?')
     
 hooks = {tests[0]:{'f':update_amplitude}}
+print('I suspect this that causes the syntax problem 2?')
+
 suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 
 
