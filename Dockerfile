@@ -95,7 +95,7 @@ RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
 RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
-RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64"' >> ~/.bashrc
+RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
 RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
 
 USER $NB_USER
