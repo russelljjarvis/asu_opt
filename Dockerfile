@@ -6,6 +6,17 @@ USER root
 #WORKDIR /home/jovyan/work/scidash/neuronunit
 #RUN pip install git+https://github.com/scidash/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
 #WORKDIR /home/jovyan/work/scidash/neuronunit
+#RUN ln -s e/jovyan/work/scidash/neuronunit PATH
+
+
+RUN pip install git+https://github.com/russelljjarvis/neuronunit@dev --install-option="--prefix=$home/jovyan/work/scidash/neuronunit" --process-dependency-links
+#Undo some of Richards nice work.
+#RUN rm -r /opt/conda/lib/python3.5/site-packages/neuronunit
+WORKDIR /home/jovyan/work/scidash/neuronunit
+RUN ln -s neuronunit /opt/conda/lib/python3.5/site-packages
+
+
+
 #WORKDIR /home/jovyan/work/scidash/sciunit
 #RUN pip install git+https://github.com/scidash/sciunit@dev --install-option="--prefix=$home/jovyan/work/scidash/sciunit" --process-dependency-links
 #WORKDIR /home/jovyan/work/scidash/sciunit
@@ -57,6 +68,8 @@ RUN conda install -y matplotlib
 
 
 RUN chown -R jovyan $HOME
+ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64"
+
 #make some of the packages installed in /opt/.../site-packages development versions. By getting write access.
 #probably dodgy quick fix.
 RUN chown -R jovyan /opt/conda/lib/python3.5/site-packages/neuronunit
@@ -80,6 +93,7 @@ RUN nrniv
 RUN python -c "import neuron; import sciunit; import neuronunit"
 RUN nrnivmodl 
 RUN python -c "import scoop; import deap"
+RUN java -Xmx400M  -Djava.awt.headless=true -jar  "/opt/conda/lib/python3.5/site-packages/pyneuroml/lib/jNeuroML-0.8.0-jar-with-dependencies.jar"  "/tmp/vanilla.xml"  -neuron -run -nogui
 
 
 WORKDIR /home/jovyan/work/git/sciunitopt
@@ -99,5 +113,8 @@ WORKDIR /home/jovyan/work/git/sciunitopt
 
 #export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64
 #Note the line below is required in order for jNeuroML to work inside pyNeuroML.
-ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64"
+
+
+
+
 
