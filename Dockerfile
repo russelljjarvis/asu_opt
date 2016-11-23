@@ -64,6 +64,8 @@ WORKDIR /home/mnt
 #RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 #WORKDIR /home/jovyan/git/sciunitopt
 
+ENTRYPOINT python -i /home/mnt/AIBS.py 
+
 
 
 
