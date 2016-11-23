@@ -1,9 +1,7 @@
 #Neuronunitopt
 A development project that integrates neuronunit with DEAP Genetic Algorithm Optomization.
 
-The program in the Dockerfile build context has only been tested in Ubuntu linux, and has not been tested with OSX
-
-## Instructions for building, deploying etc.
+## Instructions for building etc.
 
 To run this program first enter download the [docker-stacks tree associated with the dev branch.](https://github.com/scidash/docker-stacks/tree/dev "Title").
 
