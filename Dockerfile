@@ -27,6 +27,7 @@ RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 RUN conda install -y matplotlib 
 RUN chown -R jovyan $HOME
 
+#The following are convenience 
 RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
 RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
@@ -36,20 +37,21 @@ RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc
 ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64" #This line is not effective so hack:
 RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
 RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
-RUN nrniv
 
 USER $NB_USER
 
-
-#Line below Not a fair test unless I can supply /tmp/vanilla.xml
+#Test jNeuroML, which is called from pyNeuroML.
+#Line below Not a fair test unless I can supply the file /tmp/vanilla.xml
 #RUN java -Xmx400M  -Djava.awt.headless=true -jar  "/opt/conda/lib/python3.5/site-packages/pyneuroml/lib/jNeuroML-0.8.0-jar-with-dependencies.jar"  "/tmp/vanilla.xml" -neuron -#run -nogui
+
 #Check if anything broke 
 RUN python -c "import neuron; import sciunit; import neuronunit"
 RUN nrnivmodl 
 RUN python -c "import scoop; import deap"
+RUN nrniv
 
-
-WORKDIR /home/jovyan/work/git/sciunitopt
+#Finish up in a directory that easily interfaces with on the host operating system.
+WORKDIR /home/mnt
 
 #Not presently used, but will be later in development:
 #WORKDIR /home/jovyan/work/git
