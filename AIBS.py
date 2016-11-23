@@ -98,9 +98,8 @@ def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
         value = sp['stimulus_absolute_amplitude']
         value = np.round(value,2) # Round to nearest hundredth of a pA.
         value *= pq.pA # Apply units.  
-        #pdb.set_trace()
-        #Need some way to sanitise values.
-        #  
+
+        #Need some way to sanitize values in the dictionary below:.
         return {'value': value}              
               
 
@@ -108,8 +107,6 @@ def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
 #save some time by pickle loading the content if its available. 
 #using allensdk cache would be preferable, but I don't yet understand the syntax.
 
-#with open('observation.pickle', 'rb') as handle:
-#    observation = pickle.load(handle)
 
 if os.path.exists(str(os.getcwd())+"/observations.pickle"):
     print('attempting to recover from pickled file')
@@ -146,31 +143,14 @@ for cls,params in test_class_params:
     observation = cls.neuroelectro_summary_observation(neuron)
     tests += [cls(observation,params=params)]
 
-'''
-if os.path.exists(str(os.getcwd())+"/tests.pickle"):
-    print('attempting to recover from pickled file')
-    with open('tests.pickle', 'rb') as handle:
-        tests = pickle.load(handle)
-
-else:
-    print('checked path:')
-    print(str(os.getcwd())+"/tests.pickle")
-    print('no pickled file down loading time intensive')
-    with open('tests.pickle', 'wb') as handle:
-        pickle.dump(tests, handle)
-'''
 
     
 def update_amplitude(test,tests,score):
     rheobase = score.prediction['value']
     for i in [3,4,5]:
         tests[i].params['injected_square_current']['amplitude'] = rheobase*1.01 # Set current injection to just suprathreshold
-
-print('I suspect this that causes the syntax problem 1?')
     
 hooks = {tests[0]:{'f':update_amplitude}}
-print('I suspect this that causes the syntax problem 2?')
-
 suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 
 
