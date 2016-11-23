@@ -38,6 +38,11 @@ ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64" #This line is not effective
 RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
 RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
 
+
+
+WORKDIR /home/jovyan/mnt
+RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+
 USER $NB_USER
 
 #Test jNeuroML, which is called from pyNeuroML.
@@ -50,20 +55,18 @@ RUN nrnivmodl
 RUN python -c "import scoop; import deap"
 RUN nrniv
 
-#Finish up in a directory that easily interfaces with on the host operating system.
-WORKDIR /home/mnt
 
 #Not presently used, but will be later in development:
 #WORKDIR /home/jovyan/work/git
 #RUN pip install git+https://github.com/aarongarrett/inspyred
 
-#WORKDIR /home/jovyan/work/git
+#WORKDIR /home/jovyan/jovyan/mnt
 #RUN git clone https://github.com/rgerkin/IzhikevichModel.git
 
-WORKDIR /home/mnt
-RUN git clone https://github.com/russelljjarvis/sciunitopt.git
-WORKDIR /home/mnt/sciunitopt
-ENTRYPOINT python -i /home/mnt/sciunitopt/AIBS.py 
+#Finish up in a directory that easily interfaces with on the host operating system.
+
+WORKDIR /home/jovyan/mnt/sciunitopt
+ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
 
 
 
