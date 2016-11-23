@@ -60,11 +60,10 @@ WORKDIR /home/mnt
 #WORKDIR /home/jovyan/work/git
 #RUN git clone https://github.com/rgerkin/IzhikevichModel.git
 
-#WORKDIR /home/jovyan/work/git
-#RUN git clone https://github.com/russelljjarvis/sciunitopt.git
-#WORKDIR /home/jovyan/git/sciunitopt
-
-ENTRYPOINT python -i /home/mnt/AIBS.py 
+WORKDIR /home/mnt
+RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+WORKDIR /home/mnt/sciunitopt
+ENTRYPOINT python -i /home/mnt/sciunitopt/AIBS.py 
 
 
 
