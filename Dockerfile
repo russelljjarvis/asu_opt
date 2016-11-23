@@ -11,20 +11,10 @@ RUN python -c "import sciunit"
 RUN pip install git+https://github.com/python-quantities/python-quantities
 
 
-WORKDIR /home/jovyan/work/git
-RUN git clone https://github.com/rgerkin/IzhikevichModel.git
-
-WORKDIR /home/jovyan/work/git
-RUN git clone https://github.com/russelljjarvis/sciunitopt.git
-WORKDIR /home/jovyan/git/sciunitopt
-
-
-
-
 RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
 RUN apt-get install -y python3-setuptools
 RUN python -c "import quantities, neuronunit, sciunit"
-RUN cp -r $HOME/work/git/IzhikevichModel/* .
+
 
 #I prefer to have password less sudo since it permits me 
 #to quickly and easily modify the system interactively post dockerbuild.
@@ -61,9 +51,18 @@ RUN python -c "import scoop; import deap"
 
 WORKDIR /home/jovyan/work/git/sciunitopt
 
-#Not presently used:
+#Not presently used, but will be later in development:
 #WORKDIR /home/jovyan/work/git
 #RUN pip install git+https://github.com/aarongarrett/inspyred
+
+#WORKDIR /home/jovyan/work/git
+#RUN git clone https://github.com/rgerkin/IzhikevichModel.git
+
+#WORKDIR /home/jovyan/work/git
+#RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+#WORKDIR /home/jovyan/git/sciunitopt
+
+
 
 
 

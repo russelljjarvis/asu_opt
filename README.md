@@ -1,6 +1,5 @@
-The output of this program is a series of png images. Each file names is indexed by iterations of generation. By clicking through the series of images you can watch a GA population converge around an optima of a trivial error function.
-
-The program can be run with or without scoop (see more on that below).
+#Neuronunitopt
+A development project that integrates neuronunit with DEAP Genetic Algorithm Optomization.
 
 The program in the Dockerfile build context has only been tested in Ubuntu linux, and has not been tested with OSX
 
