@@ -15,7 +15,7 @@ import quantities as pq
 import sciunit
 import neuronunit
 #from neuronunit import aibs
-import pickle
+import pickle as pickle
 import pdb
 
 from neuronunit.models.reduced import ReducedModel
