@@ -1,42 +1,48 @@
 FROM scidash/neuronunit-scoop-deap
 USER root
 
-RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
+#RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 
+
 WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
-RUN python -c "import sciunit"
+#RUN python -c "import sciunit"
+
 RUN pip install git+https://github.com/python-quantities/python-quantities
-
-
+WORKDIR /home/jovyan/work/scidash/pyNeuroML
+RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
+RUN python -c "import pyneuroml"
 #The purpose behind the seemingly redundant steps below is to make development copies of the code.
 #These development copies
 
-
+#RUN conda install -y pkg-config
 WORKDIR /home/jovyan/work/scidash
 RUN git clone -b dev https://github.com/scidash/neuronunit
 WORKDIR /home/jovyan/work/scidash/neuronunit
-RUN python setup.py install 
+RUN ln -s /home/jovyan/work/scidash/neuronunit /opt/conda/lib/python3.5/site-packages/neuronunit
+#RUN python -c "import neuronunit"
+#RUN python setup.py install 
+RUN python -c "import pyneuroml"
+#WORKDIR /home/jovyan/work/scidash
+#RUN git clone https://github.com/NeuroML/pyNeuroML 
+#WORKDIR /home/jovyan/work/scidash/pyNeuroML/pyneuroml
+#RUN ln -s /home/jovyan/work/scidash/pyNeuroML/pyneuroml /opt/conda/lib/python3.5/site-packages/pyneuroml
 
-WORKDIR /home/jovyan/work/scidash
-RUN git clone https://github.com/NeuroML/pyNeuroML 
-WORKDIR /home/jovyan/work/scidash/pyNeuroML
-RUN python setup.py install 
+
+#RUN python setup.py install 
+
+#WORKDIR /home/jovyan/work/scidash
+#RUN git clone -b py34_rgerkin https://github.com/AllenInstitute/AllenSDK
+#WORKDIR /home/jovyan/work/scidash/AllenSDK
+#RUN python setup.py install
 
 
-WORKDIR /home/jovyan/work/scidash
-RUN git clone -b py34_rgerkin https://github.com/AllenInstitute/AllenSDK
-WORKDIR /home/jovyan/work/scidash/AllenSDK
-RUN python setup.py install
-
-RUN python -c "import sciunit"
-RUN pip install git+https://github.com/python-quantities/python-quantities
 
 
 RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
-RUN apt-get install -y python3-setuptools
+#RUN apt-get install -y python3-setuptools
 RUN python -c "import quantities, neuronunit, sciunit"
 
 
@@ -78,7 +84,7 @@ USER $NB_USER
 #RUN java -Xmx400M  -Djava.awt.headless=true -jar  "/opt/conda/lib/python3.5/site-packages/pyneuroml/lib/jNeuroML-0.8.0-jar-with-dependencies.jar"  "/tmp/vanilla.xml" -neuron -#run -nogui
 
 #Check if anything broke 
-RUN python -c "import neuron; import sciunit; import neuronunit"
+RUN python -c "import neuron; import sciunit; import neuronunit; import pyneuroml"
 RUN nrnivmodl 
 RUN python -c "import scoop; import deap"
 RUN nrniv
