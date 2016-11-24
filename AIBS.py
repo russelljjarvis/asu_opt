@@ -4,7 +4,13 @@
 # In[1]:
 
 import os, sys
+print('forcing load of development neuron unit')
+sys.path[0]='/home/jovyan/work/scidash/neuronunit'
+import neuronunit
+
+
 path=os.getcwd()
+
 
 
 # In[2]:

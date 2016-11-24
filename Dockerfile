@@ -18,10 +18,14 @@ RUN python -c "import pyneuroml"
 #These development copies
 
 #RUN conda install -y pkg-config
+
 WORKDIR /home/jovyan/work/scidash
 RUN git clone -b dev https://github.com/scidash/neuronunit
 WORKDIR /home/jovyan/work/scidash/neuronunit
 RUN ln -s /home/jovyan/work/scidash/neuronunit /opt/conda/lib/python3.5/site-packages/neuronunit
+
+
+
 #RUN python -c "import neuronunit"
 #RUN python setup.py install 
 RUN python -c "import pyneuroml"
@@ -65,7 +69,7 @@ RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias src="source ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
-
+RUN echo 'alias nu="cd /home/jovyan/work/scidash/neuronunit"' >> ~/.bashrc
 #Note the line below is required in order for jNeuroML to work inside pyNeuroML.
 ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64" #This line is not effective so the 
 #next line is a hack, that achieves the same objectives as those embodied in the command above:
