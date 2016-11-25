@@ -54,10 +54,10 @@ Subsequently to see a list of all notebook(s) in the directory open the followin
 `http://localhost:8888/tree`
 
 
-# Question:
+[comment]: <> ( Question:
 
 #How do you know that the program is solving both objective functions when only one of them is plotted. Answer: Need to fix in the future, such a 2D matrix of the error surface is made. Such that each element of the matrix represents the simple linear sum f(x,y). 
-
+)
 #The following is not applicable in the current development stage, but will be applicable later:
 
 #Once the program has finished, you can stick around you can even edit the file `/home/jovyan/work/scipyopt/nsga2.py` with emacs or rerun it by executing:
