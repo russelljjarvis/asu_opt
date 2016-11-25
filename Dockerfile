@@ -1,6 +1,9 @@
-FROM scidash/neuronunit-scoop-deap
-USER root
+FROM scidash/neuron-mpi-neuroml
 
+USER root
+RUN pip install git+https://github.com/soravux/scoop
+RUN pip install git+https://github.com/DEAP/deap
+RUN pip install git+https://github.com/rgerkin/rickpy
 #RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
