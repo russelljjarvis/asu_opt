@@ -9,9 +9,15 @@ Instructions for getting the image are at the [README.md](https://github.com/sci
 
 Get the image corresponding to the build: neuronunit-scoop-deap
 
-# Deploy
+# Build
 Then build the Dockerfile in this directory which uses the docker-stacks as its foundation. You can use a command similar or the same as:
 `sudo docker build -t deapscoop1 .` 
+
+# Run:
+```sudo docker run -v `pwd`:/home/mnt -it deapscoop1 bash```
+then inside the docker image:
+execute: `mnt`
+`python AIBS.py`
 
 # Other commands that are useful for interactive Development and Monkey patching:
 
