@@ -4,6 +4,8 @@ USER root
 RUN pip install git+https://github.com/soravux/scoop
 RUN pip install git+https://github.com/DEAP/deap
 RUN pip install git+https://github.com/rgerkin/rickpy
+
+RUN pip install git+https://github.com/scidash/sciunit@dev --process-dependency-links
 #RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
