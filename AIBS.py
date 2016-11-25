@@ -1,17 +1,43 @@
 
-# coding: utf-8
+# coding:   'utf-8
 
 # In[1]:
 
 import os, sys
-print('forcing load of development neuron unit')
-sys.path[0]='/home/jovyan/work/scidash/neuronunit'
-import neuronunit
+#print('forcing load of development neuron unit')
+#sys.path[0]='/home/jovyan/work/scidash'
+#sys.path[-1]='/home/jovyan/work/scidash'
+#print(sys.path)
+#import neuronunit
+#print(neuronunit.__file__)
+#import pdb
+#pdb.set_trace()
 
 
+def use_dev_packages(dev_packages):
+    """
+    Adapted from Rickpy https://github.com/rgerkin/rickpy 
+    Prepends items in dev_packages to sys.path, and 
+    assumes these paths exist in the 
+    the user's HOME/mnt/sciunitopt/ directory. 
+    Format for dev_packages items is repo/package.
+    
+    /home/jovyan
+    """
+
+    HOME = os.path.expanduser('~')
+    
+    sp = os.path.join('/','opt/conda/lib/python3.5/site-packages')
+    if os.path.exists(sp) and sp not in sys.path:
+        sys.path.append(sp)  
+    for i,package in enumerate(dev_packages):
+        if package.split('/')[-1] not in sys.path[len(dev_packages)-i]:
+            sys.path.insert(1,os.path.join(HOME,'mnt/sciunitopt/',package))  
+
+#use_dev_packages([neuronunit])
 path=os.getcwd()
 
-
+'RS_pop[0]/v'
 
 # In[2]:
 #get_ipython().magic('matplotlib notebook')
@@ -131,24 +157,31 @@ else:
         pickle.dump(observation, handle)
 
 
-
+#Compare differences between Allen Brain derived observations, Neuroelectro derived recordings and 
+#Izkevitch model
 
 
 
 tests += [nu_tests.RheobaseTest(observation=observation)]
-    
+#Edited out below:   
+#(nu_tests.RestingPotentialTest,None),
+                      
 test_class_params = [(nu_tests.InputResistanceTest,None),
                      (nu_tests.TimeConstantTest,None),
-                     (nu_tests.CapacitanceTest,None),
-                     (nu_tests.RestingPotentialTest,None),
+                     (nu_tests.CapacitanceTest,None),   
                      (nu_tests.InjectedCurrentAPWidthTest,None),
                      (nu_tests.InjectedCurrentAPAmplitudeTest,None),
                      (nu_tests.InjectedCurrentAPThresholdTest,None)]
 
+
+print('neuronunit_generated these tests')
 for cls,params in test_class_params:
+    print('neuronunit_generated these tests')
     observation = cls.neuroelectro_summary_observation(neuron)
     tests += [cls(observation,params=params)]
-
+    print(observation)
+    print(tests)
+    print(cls,params)
 
     
 def update_amplitude(test,tests,score):
@@ -163,6 +196,7 @@ suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 # In[5]:
 
 model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
+print('interesting that the basic model works')
 suite.judge(model)
 
 
@@ -182,10 +216,13 @@ for vr in np.linspace(-75,-50,6):
                                })
     #model.skip_run = True
     models.append(model)
-score_matrix = suite.judge(models, verbose=False)
+print('interesting that judging a list of models with different parameters does not work. Where does it fail?')
+print('surely its just the nans or someother weird data type causing a value that is not optimizible in a data range')
+print('it would be easier to evaluate if each model was optomized inside the loop')
+score_matrix = suite.judge(models)
 score_matrix.show_mean = True
-score_matrix.sortable = True
-score_matrix
+#score_matrix.sortable = True
+#score_matrix
 
 
 # In[20]:
@@ -214,7 +251,6 @@ plt.tight_layout()
 
 # In[6]:
 
-"""
 for a in np.linspace(0.015,0.045,2):
     for b in np.linspace(-3.5,-0.5,2):
         for C in np.linspace(50,150,3):
@@ -233,9 +269,8 @@ for a in np.linspace(0.015,0.045,2):
                 models3.append(model)
 score_matrix3 = suite.judge(models3, verbose=False)
 score_matrix3.show_mean = True
-score_matrix3.sortable = True
-score_matrix3
-""";
+#score_matrix3.sortable = True
+#score_matrix3
 
 
 # In[7]:
