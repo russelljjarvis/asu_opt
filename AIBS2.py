@@ -4,14 +4,7 @@
 # In[1]:
 
 import os, sys
-#print('forcing load of development neuron unit')
-#sys.path[0]='/home/jovyan/work/scidash'
-#sys.path[-1]='/home/jovyan/work/scidash'
-#print(sys.path)
-#import neuronunit
-#print(neuronunit.__file__)
-#import pdb
-#pdb.set_trace()
+
 
 
 def use_dev_packages(dev_packages):
@@ -35,9 +28,6 @@ def use_dev_packages(dev_packages):
             sys.path.insert(1,os.path.join(HOME,'mnt/sciunitopt/',package))  
 
 #use_dev_packages([neuronunit])
-path=os.getcwd()
-
-'RS_pop[0]/v'
 
 # In[2]:
 #get_ipython().magic('matplotlib notebook')
@@ -200,7 +190,8 @@ print(tests)
 print(hooks)
 print(dir(sciunit.TestSuite))
 #pdb.set_trace()
-
+help(sciunit.TestSuite)
+pdb.set_trace()
 
 suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 
@@ -208,7 +199,6 @@ suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 # In[5]:
 
 model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
-print('interesting that the basic model works')
 suite.judge(model)
 
 
@@ -232,34 +222,13 @@ for vr in np.linspace(-75,-50,6):
     #model.skip_run = True
     i+=1
     print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-
-
-
     print(vr,' failed for this parameter')
     print(i,' failed for this index')
-
-
-
-
     print('############'+'\n')
     print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-    print('############'+'\n')
-
-
 
     models.append(model)
 
-    #pdb.set_trace() 
     check_error = suite.judge(model)
   
 print('interesting that judging a list of models with different parameters does not work. Where does it fail?')

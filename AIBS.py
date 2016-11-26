@@ -164,14 +164,21 @@ else:
 
 tests += [nu_tests.RheobaseTest(observation=observation)]
 #Edited out below:   
-#(nu_tests.RestingPotentialTest,None),
+#
                       
 test_class_params = [(nu_tests.InputResistanceTest,None),
                      (nu_tests.TimeConstantTest,None),
-                     (nu_tests.CapacitanceTest,None),   
-                     (nu_tests.InjectedCurrentAPWidthTest,None),
-                     (nu_tests.InjectedCurrentAPAmplitudeTest,None),
-                     (nu_tests.InjectedCurrentAPThresholdTest,None)]
+                     (nu_tests.CapacitanceTest,None)]
+                     
+                 
+                     #(nu_tests.InjectedCurrentAPWidthTest,{'injected_current':{'amplitude':100.0*pq.pA}}),
+                     #(nu_tests.InjectedCurrentAPAmplitudeTest,{'injected_current':{'amplitude':100.0*pq.pA}}),
+                         
+                     #,
+                     #(nu_tests.RestingPotentialTest,None),   
+                     #(nu_tests.InjectedCurrentAPWidthTest,None),
+                     #(nu_tests.InjectedCurrentAPAmplitudeTest,None),
+                     #(nu_tests.InjectedCurrentAPThresholdTest,None)]
 
 
 print('neuronunit_generated these tests')
@@ -186,10 +193,19 @@ for cls,params in test_class_params:
     
 def update_amplitude(test,tests,score):
     rheobase = score.prediction['value']
-    for i in [3,4,5]:
-        tests[i].params['injected_square_current']['amplitude'] = rheobase*1.01 # Set current injection to just suprathreshold
+    #for i in [3,4,5]:
+    #    tests[i].params['injected_square_current']['amplitude'] = rheobase*1.01 # Set current injection to just suprathreshold
     
 hooks = {tests[0]:{'f':update_amplitude}}
+
+
+import pdb
+print(tests)
+print(hooks)
+print(dir(sciunit.TestSuite))
+#pdb.set_trace()
+
+
 suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 
 
@@ -208,6 +224,9 @@ test = nu_tests.TimeConstantTest
 # In[5]:
 
 models = []
+
+
+i=0
 for vr in np.linspace(-75,-50,6):
     model = ReducedModel(LEMS_MODEL_PATH, 
                          name='V_rest=%dmV' % vr, 
@@ -215,7 +234,38 @@ for vr in np.linspace(-75,-50,6):
                                     {'vr':'%d mV' % vr}
                                })
     #model.skip_run = True
+    i+=1
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+
+
+
+    print(vr,' failed for this parameter')
+    print(i,' failed for this index')
+
+
+
+
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+    print('############'+'\n')
+
+
+
     models.append(model)
+
+    #pdb.set_trace() 
+    check_error = suite.judge(model)
+  
 print('interesting that judging a list of models with different parameters does not work. Where does it fail?')
 print('surely its just the nans or someother weird data type causing a value that is not optimizible in a data range')
 print('it would be easier to evaluate if each model was optomized inside the loop')

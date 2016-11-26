@@ -59,34 +59,7 @@ class deap_capsule:
                 self.sciunitscore=[]#(0,0)
                 self.sus0=None
                 self.sus1=None
-            
-        def error_surface(pop,gen,ff=self.ff):
-            '''
-            Plot the population on the error surface at generation number gen.
-            solve a trivial parabola by brute force
-            plot the function to verify the maxima
-            Inputs are DEAP GA population of chromosomes and generation number
-            no outputs.
-            '''
-            xx=np.linspace(-170,170,10000)
-            outf=np.array([ ff(float(i)) for i in xx ])
-            optima_bf=outf[np.where(outf==np.max(outf))][0]
-            #print('maxima of the curve via brute force:', optima_bf)
-            import matplotlib
-            matplotlib.use('agg')
-            import matplotlib.pyplot as plt
-            plt.hold(True)
-            plt.plot(xx,outf)
-            scatter_pop=np.array([ind[0] for ind in pop])
-            #note the error score is inverted bellow such that it aligns with the error surface.
-            scatter_score=np.array([-ind.sus0 for ind in pop])
-
-            #pdb.set_trace()
-            plt.scatter(scatter_pop,scatter_score)
-            plt.hold(False)
-            plt.savefig('simple_function'+str(gen)+'.png')
-
-
+   
 
         def uniform(low, up, size=None):
             '''
@@ -144,8 +117,21 @@ class deap_capsule:
             return score    
 
 
-
+        
         def sciunitjudge(individual,ff=self.ff,gg=self.gg):#,Previous_best=Previous_best):
+            from sciunit import TestSuite
+            #>>> help(TestSuite.judge)
+            #Help on function judge in module sciunit:
+
+            #judge(self, models, skip_incapable=True, stop_on_error=True, deep_error=False)
+
+            
+
+            TestSuite.judge(self, models=individual, skip_incapable=True, stop_on_error=True, deep_error=False)
+            
+            #from sciunit import TestSuite
+            
+
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
@@ -248,3 +234,29 @@ class deap_capsule:
         error_surface(pop,gen,ff=self.ff)
         return (pop[0][0],pop[0].sus0,ff)
 
+        '''
+        Depreciated
+        def error_surface(pop,gen,ff=self.ff):
+            Plot the population on the error surface at generation number gen.
+            solve a trivial parabola by brute force
+            plot the function to verify the maxima
+            Inputs are DEAP GA population of chromosomes and generation number
+            no outputs.
+            xx=np.linspace(-170,170,10000)
+            outf=np.array([ ff(float(i)) for i in xx ])
+            optima_bf=outf[np.where(outf==np.max(outf))][0]
+            #print('maxima of the curve via brute force:', optima_bf)
+            import matplotlib
+            matplotlib.use('agg')
+            import matplotlib.pyplot as plt
+            plt.hold(True)
+            plt.plot(xx,outf)
+            scatter_pop=np.array([ind[0] for ind in pop])
+            #note the error score is inverted bellow such that it aligns with the error surface.
+            scatter_score=np.array([-ind.sus0 for ind in pop])
+
+            #pdb.set_trace()
+            plt.scatter(scatter_pop,scatter_score)
+            plt.hold(False)
+            plt.savefig('simple_function'+str(gen)+'.png')
+        '''  

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM scidash/neuron-mpi-neuroml
 
 USER root
@@ -5,6 +6,19 @@ RUN pip install git+https://github.com/soravux/scoop
 RUN pip install git+https://github.com/DEAP/deap
 RUN pip install git+https://github.com/rgerkin/rickpy
 
+<<<<<<< Updated upstream
+RUN pip install git+https://github.com/scidash/sciunit@dev --process-dependency-links
+#RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
+=======
+
+FROM scidash/neuronunit-scoop-deap
+USER root
+#The point of the master branch is to currently reliably reproduce bugs.
+
+RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
+>>>>>>> 1ce7d5fe406d30790ae5c6e581690f827c657411
+=======
+>>>>>>> Stashed changes
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 RUN pip install neo elephant
@@ -23,14 +37,14 @@ RUN git clone https://github.com/stripathy/AIBS_cell_types.git
 RUN pip install git+https://github.com/python-quantities/python-quantities
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
-RUN python -c "import pyneuroml"
-#The purpose behind the seemingly redundant steps below is to make development copies of the code.
-#These development copies
 
+<<<<<<< Updated upstream
+=======
 RUN conda install -y pyqt
 RUN conda install -y matplotlib 
 
 WORKDIR /home/jovyan/work/scidash
+>>>>>>> Stashed changes
 
 #RUN pip install git+https://github.com/scidash/sciunit@dev --process-dependency-links
 #RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
@@ -52,10 +66,9 @@ RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3
 RUN python -c "import neuronunit"
 RUN python -c "from neuronunit.models.reduced import ReducedModel"
 
+RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
 
-
-
-
+RUN python -c "import pyneuroml"
 RUN python -c "import quantities, neuronunit, sciunit"
 
 
@@ -66,7 +79,6 @@ RUN apt-get update \
       && apt-get install -y sudo \
       && rm -rf /var/lib/apt/lists/*
 RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
-
 
 RUN chown -R jovyan $HOME
 
@@ -90,10 +102,21 @@ RUN echo 'alias nu="python -c "from neuronunit.models.reduced import ReducedMode
 RUN git config --global user.email "rjjarvis@asu.edu"
 RUN git config --global user.name "Russell Jarvis"
 
-WORKDIR /home/jovyan/mnt
-RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 
 #from neuronunit.models.reduced import ReducedModel
+
+
+
+
+<<<<<<< Updated upstream
+WORKDIR /home/jovyan/mnt
+RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+=======
+
+#WORKDIR /home/jovyan/mnt
+#RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+>>>>>>> Stashed changes
+
 
 USER $NB_USER
 
@@ -112,9 +135,14 @@ RUN nrniv
 
 #Uncomment the following two lines if you don't want to log in to the docker image interactively.
 
+<<<<<<< Updated upstream
+WORKDIR /home/jovyan/mnt/sciunitopt
+ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
+=======
 WORKDIR /home/mnt
 #WORKDIR /home/jovyan/mnt/sciunitopt
 #ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
+>>>>>>> Stashed changes
 
 
 
