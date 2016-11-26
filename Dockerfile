@@ -20,6 +20,14 @@ RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --pr
 WORKDIR /home/jovyan/work/scidash
 RUN git clone https://github.com/stripathy/AIBS_cell_types.git
 
+
+#Install some bloat ware temporarily.
+#To be deleted in the future.
+#stripathy/AIBS_cell_types is just a good test of some of the functionality of packages trying to get working 
+#here:
+WORKDIR /home/jovyan/work/scidash
+RUN git clone https://github.com/stripathy/AIBS_cell_types.git
+
 RUN pip install git+https://github.com/python-quantities/python-quantities
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
@@ -36,6 +44,24 @@ WORKDIR /home/jovyan/work/scidash
 #RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
 
 RUN pip install bs4
+<<<<<<< Updated upstream
+=======
+
+RUN git clone -b dev https://github.com/scidash/sciunit.git
+WORKDIR /home/jovyan/work/scidash/sciunit
+RUN ln -s /home/jovyan/work/scidash/sciunit/sciunit /opt/conda/lib/python3.5/site-packages/sciunit
+RUN python -c "import sciunit"
+
+WORKDIR /home/jovyan/work/scidash
+RUN git clone -b dev https://github.com/russelljjarvis/neuronunit.git
+#RUN pip install git+https://github.com/scidash/neuronunit
+#WORKDIR /home/jovyan/work/scidash/neuronunit
+RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages
+
+
+RUN python -c "import neuronunit"
+RUN python -c "from neuronunit.models.reduced import ReducedModel"
+>>>>>>> Stashed changes
 
 RUN git clone -b dev https://github.com/scidash/sciunit.git
 WORKDIR /home/jovyan/work/scidash/sciunit
@@ -67,7 +93,10 @@ RUN apt-get update \
       && rm -rf /var/lib/apt/lists/*
 RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 RUN chown -R jovyan $HOME
 
 #The following are convenience aliases
@@ -86,12 +115,23 @@ RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
 RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
 RUN echo 'alias sciunit="cd /work/scidash/sciunit"' >> ~/.bashrc
 RUN echo 'alias nu="python -c "from neuronunit.models.reduced import ReducedModel""'
+<<<<<<< Updated upstream
+=======
 
 RUN git config --global user.email "rjjarvis@asu.edu"
 RUN git config --global user.name "Russell Jarvis"
 
-WORKDIR /home/jovyan/mnt
-RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+
+#from neuronunit.models.reduced import ReducedModel
+
+
+>>>>>>> Stashed changes
+
+RUN git config --global user.email "rjjarvis@asu.edu"
+RUN git config --global user.name "Russell Jarvis"
+
+#WORKDIR /home/jovyan/mnt
+#RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 
 #from neuronunit.models.reduced import ReducedModel
 
