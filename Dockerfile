@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM scidash/neuron-mpi-neuroml
 
 USER root
@@ -7,51 +8,30 @@ RUN pip install git+https://github.com/rgerkin/rickpy
 
 RUN pip install git+https://github.com/scidash/sciunit@dev --process-dependency-links
 #RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
+=======
+
+FROM scidash/neuronunit-scoop-deap
+USER root
+#The point of the master branch is to currently reliably reproduce bugs.
+
+RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
+>>>>>>> 1ce7d5fe406d30790ae5c6e581690f827c657411
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 
 
 WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
-#RUN python -c "import sciunit"
 
 RUN pip install git+https://github.com/python-quantities/python-quantities
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
-RUN python -c "import pyneuroml"
-#The purpose behind the seemingly redundant steps below is to make development copies of the code.
-#These development copies
-
-#RUN conda install -y pkg-config
-
-WORKDIR /home/jovyan/work/scidash
-RUN git clone -b dev https://github.com/scidash/neuronunit
-WORKDIR /home/jovyan/work/scidash/neuronunit
-RUN ln -s /home/jovyan/work/scidash/neuronunit /opt/conda/lib/python3.5/site-packages/neuronunit
-
-
-
-#RUN python -c "import neuronunit"
-#RUN python setup.py install 
-RUN python -c "import pyneuroml"
-#WORKDIR /home/jovyan/work/scidash
-#RUN git clone https://github.com/NeuroML/pyNeuroML 
-#WORKDIR /home/jovyan/work/scidash/pyNeuroML/pyneuroml
-#RUN ln -s /home/jovyan/work/scidash/pyNeuroML/pyneuroml /opt/conda/lib/python3.5/site-packages/pyneuroml
-
-
-#RUN python setup.py install 
-
-#WORKDIR /home/jovyan/work/scidash
-#RUN git clone -b py34_rgerkin https://github.com/AllenInstitute/AllenSDK
-#WORKDIR /home/jovyan/work/scidash/AllenSDK
-#RUN python setup.py install
-
 
 
 
 RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
-#RUN apt-get install -y python3-setuptools
+
+RUN python -c "import pyneuroml"
 RUN python -c "import quantities, neuronunit, sciunit"
 
 
@@ -82,9 +62,9 @@ RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
 RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
 
 
-
 WORKDIR /home/jovyan/mnt
 RUN git clone https://github.com/russelljjarvis/sciunitopt.git
+
 
 USER $NB_USER
 
@@ -103,8 +83,8 @@ RUN nrniv
 
 #Uncomment the following two lines if you don't want to log in to the docker image interactively.
 
-#WORKDIR /home/jovyan/mnt/sciunitopt
-#ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
+WORKDIR /home/jovyan/mnt/sciunitopt
+ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
 
 
 
