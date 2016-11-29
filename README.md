@@ -47,7 +47,7 @@ Or equivalently:
 
 The flag `-p` means use port `8888`. The flag `-i` means interactive. The flag `-v` means mount volume.
 
-From inside the docker image you can navigate to the appropriate directory. In this case its `/home/jovyan/work/git`, and then run the following command
+From inside the docker image you can navigate to the appropriate directory. In this case its `/home/jovyan/work/git`, and then run the following command `nb`, which is a BASH alias for:
 `jupyter-notebook --ip=* --no-browser`
 
 Subsequently to see a list of all notebook(s) in the directory open the following URL in your browser:
