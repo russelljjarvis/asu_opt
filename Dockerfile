@@ -1,4 +1,3 @@
-
 FROM scidash/neuron-mpi-neuroml
 
 USER root
@@ -6,16 +5,16 @@ RUN pip install git+https://github.com/soravux/scoop
 RUN pip install git+https://github.com/DEAP/deap
 RUN pip install git+https://github.com/rgerkin/rickpy
 
+#Install pyNeuroML
 WORKDIR /home/jovyan/work/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 RUN pip install neo elephant bs4
 
+#Install allensdk r_gerkin branch
 WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
 
 RUN pip install git+https://github.com/python-quantities/python-quantities
-WORKDIR /home/jovyan/work/scidash/pyNeuroML
-RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 RUN python -c "import pyneuroml"
 
 RUN conda install -y pyqt
@@ -36,14 +35,10 @@ WORKDIR /home/jovyan/work/scidash
 RUN git clone -b dev https://github.com/russelljjarvis/neuronunit.git
 RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages
 
-
+#Check if anything broke 
 RUN python -c "import neuronunit"
 RUN python -c "from neuronunit.models.reduced import ReducedModel"
 RUN python -c "import quantities, neuronunit, sciunit"
-
-
-
-#Check if anything broke 
 RUN python -c "import neuron; import sciunit; import neuronunit; import pyneuroml"
 RUN nrnivmodl 
 RUN python -c "import scoop; import deap"
@@ -69,14 +64,23 @@ WORKDIR /home/jovyan/work/scidash/neuroConstruct
 RUN bash nC.sh -make
 RUN bash nCenv.sh
 RUN echo 'export NC_HOME=home/jovyan/work/scidash/neuroConstruct' >> ~/.bashrc
-RUN pip install execnet
 
 
 RUN ln -s /home/jovyan/work/scidash/neuroConstruct/pythonnC /opt/conda/lib/python3.5/site-packages/pythonnC
 RUN python -c "import pythonnC" 
 
 
+RUN pip install execnet
 
+RUN apt-get update \
+      && apt-get install -y sudo \
+      && rm -rf /var/lib/apt/lists/*
+RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
+
+
+RUN chown -R jovyan $HOME
+
+USER $NB_USER
 
 #The following are convenience aliases
 #once inside the image make it such that a notebook can be created using 
@@ -98,26 +102,13 @@ RUN echo 'alias nu="python -c "from neuronunit.models.reduced import ReducedMode
 #RUN echo "export DJANGO_SETTINGS_MODULE=nirla.settings"> ~/.bashrc
 #RUN echo "heroku config:set DJANGO_SETTINGS_MODULE=nirla.settings --account personal"> ~/.bashrc
 
-#I prefer to have password less sudo since it permits me 
-#to quickly and easily modify the system interactively post dockerbuild.
-
-RUN apt-get update \
-      && apt-get install -y sudo \
-      && rm -rf /var/lib/apt/lists/*
-RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
-
-
-RUN chown -R jovyan $HOME
-
-USER $NB_USER
-WORKDIR /home/mnt
 
 #WORKDIR /home/jovyan/mnt/sciunitopt
 #ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
-
 #Finish up in a directory that easily interfaces with on the host operating system.
 
 #Uncomment the following two lines if you don't want to log in to the docker image interactively.
+WORKDIR /home/mnt
 
 WORKDIR /home/jovyan/mnt/sciunitopt
 ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
