@@ -18,15 +18,13 @@ from deap import creator
 from deap import tools
 
 #Is inspyred what is crashing out matplotlib???
-from inspyred.ec import terminators as term
+#from inspyred.ec import terminators as term
 
 class deap_capsule:
     '''
     Just a container for hiding implementation, not a very sophisticated one at that.
     '''
-    def __init__(self,ff,gg,range_of_values=None,*args):
-        self.ff=ff
-        self.gg=gg # a second dummy function to demonstrate multi objective.
+    def __init__(self,range_of_values=None,*args):
         self.tb = base.Toolbox()
         self.ngen=None
         self.pop_size=None
@@ -37,7 +35,7 @@ class deap_capsule:
         #TODO email the DEAP list about this issue too.        
         #TODO refactor MU into pop_size 
                              #self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,self.range_of_values
-    def sciunit_optimize(self,ff,gg,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
+    def sciunit_optimize(self,test,hooks,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
     #def sciunit_optimize(ff=self.ff,range_of_values=None,seed=None):
         
         self.ngen = ngen#250
@@ -83,54 +81,37 @@ class deap_capsule:
         toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
         toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
         toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-
-        def calc_errorf(individual, ff=self.ff):
-            '''
-            What follows is a rule for generating error functions that should be generalizable 
-            to finding all global maximas.
-            '''
-            value=ff(individual[0])  
-            if value>0:
-               score = 1/value #the larger the return value the smaller the error, always.
-            elif value==0:
-               score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
-            elif value <0:
-               score = -(value+1)#the smaller the return value the larger the error, always.
-            #individual.sciunitscore.append(score)
-            individual.sus0=score
-            return score    
-
-        def calc_errorg(individual, gg=self.gg):
-            '''
-            What follows is a rule for generating error functions that should be generalizable 
-            to finding all global maximas.
-            '''
-            value=gg(individual[1])  
-            if value>0:
-               score = 1/value #the larger the return value the smaller the error, always.
-            elif value==0:
-               score = 5/4 # zero needs to still return a nominally large error between 2 and 1/2
-            elif value <0:
-               score = -(value+1)#the smaller the return value the larger the error, always.
-            #individual.sciunitscore[1]=score
-            individual.sus1=score
-            return score    
-
+      
 
         
-        def sciunitjudge(individual,ff=self.ff,gg=self.gg):#,Previous_best=Previous_best):
+        def call2sciunitjudge(individual):#callsciunitjudge
             from sciunit import TestSuite
+            import sciunit
+            from neuronunit.models.reduced import ReducedModel
+            import os
+            HOME = os.path.expanduser('~')
+            LEMS_MODEL_PATH = os.path.join(os.getcwd(),'LEMS_2007One.xml')
+            model = ReducedModel(LEMS_MODEL_PATH, 
+                         name='V_rest=%dmV' % individual[0], 
+                         attrs={'//izhikevich2007Cell':
+                                    {'vr':'%d mV' %individual[0]}
+                               })
+                        
+            suite = sciunit.TestSuite("vm_suite",test,hooks=hooks)
+
+            check_error = suite.judge(model)
+            error=check_error.values[0][0].sort_key
+
+            #pdb.set_trace()
+
+            #check_error = TestSuite.judge(models=model)#, skip_incapable=True, stop_on_error=True, deep_error=False)
+            
+            #from sciunit import TestSuite
             #>>> help(TestSuite.judge)
             #Help on function judge in module sciunit:
 
             #judge(self, models, skip_incapable=True, stop_on_error=True, deep_error=False)
 
-            
-
-            TestSuite.judge(self, models=individual, skip_incapable=True, stop_on_error=True, deep_error=False)
-            
-            #from sciunit import TestSuite
-            
 
             '''
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
@@ -141,12 +122,12 @@ class deap_capsule:
             assert type(individual[0])==float# protect input.            
             assert type(individual[1])==float# protect input.            
             #Linear sum of errors, this is not what I recommend.
-            error=calc_errorf(individual, ff)+calc_errorg(individual, gg)#Previous_best,ff)
+            #error=calc_errorf(individual, ff)+calc_errorg(individual, gg)#Previous_best,ff)
             return error, 
 
         #pdb.set_trace()
         #individual,ff,previous_best
-        toolbox.register("evaluate",sciunitjudge)#,individual,ff,previous_best)
+        toolbox.register("evaluate",call2sciunitjudge)#,individual,ff,previous_best)
         toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
         toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
         #toolbox.register("select", tools.selNSGA2)
