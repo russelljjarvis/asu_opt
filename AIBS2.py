@@ -120,8 +120,6 @@ def get_value_dict(experiment_params,sweep_ids,kind=str('rheobase')):
         value = sp['stimulus_absolute_amplitude']
         value = np.round(value,2) # Round to nearest hundredth of a pA.
         value *= pq.pA # Apply units.  
-
-        #Need some way to sanitize values in the dictionary below:.
         return {'value': value}              
               
 
@@ -189,9 +187,8 @@ import pdb
 print(tests)
 print(hooks)
 print(dir(sciunit.TestSuite))
-#pdb.set_trace()
-help(sciunit.TestSuite)
-pdb.set_trace()
+
+
 
 suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 
@@ -212,20 +209,12 @@ test = nu_tests.TimeConstantTest
 models = []
 
 
-i=0
 for vr in np.linspace(-75,-50,6):
     model = ReducedModel(LEMS_MODEL_PATH, 
                          name='V_rest=%dmV' % vr, 
                          attrs={'//izhikevich2007Cell':
                                     {'vr':'%d mV' % vr}
                                })
-    #model.skip_run = True
-    i+=1
-    print('############'+'\n')
-    print(vr,' failed for this parameter')
-    print(i,' failed for this index')
-    print('############'+'\n')
-    print('############'+'\n')
 
     models.append(model)
 
