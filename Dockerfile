@@ -64,34 +64,6 @@ RUN python -c "import quantities, neuronunit, sciunit"
 #I prefer to have password less sudo since it permits me 
 #to quickly and easily modify the system interactively post dockerbuild.
 
-RUN apt-get update \
-      && apt-get install -y sudo \
-      && rm -rf /var/lib/apt/lists/*
-RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
-
-RUN chown -R jovyan $HOME
-
-#The following are convenience aliases
-#once inside the image make it such that a notebook can be created using 
-#the dockerimage python, but the hosts browser and the hosts mounted file system.
-RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
-RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
-RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
-RUN echo 'alias src="source ~/.bashrc"' >> ~/.bashrc
-RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
-RUN echo 'alias nu="cd /home/jovyan/work/scidash/neuronunit"' >> ~/.bashrc
-#Note the line below is required in order for jNeuroML to work inside pyNeuroML.
-ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64" #This line is not effective so the 
-#next line is a hack, that achieves the same objectives as those embodied in the command above:
-RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
-RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
-RUN echo 'alias sciunit="cd /work/scidash/sciunit"' >> ~/.bashrc
-RUN echo 'alias nu="python -c "from neuronunit.models.reduced import ReducedModel""'
-
-#from neuronunit.models.reduced import ReducedModel
-#WORKDIR /home/jovyan/mnt
-#RUN git clone https://github.com/russelljjarvis/sciunitopt.git
-
  
 
 
@@ -110,9 +82,12 @@ RUN nrniv
 
 #Uncomment the following two lines if you don't want to log in to the docker image interactively.
 
-
-RUN pip install git+https://github.com/openworm/ChannelWorm.git
 RUN pip install django
+
+#https://github.com/russelljjarvis/ChannelWormDjango
+#RUN pip install git+https://github.com/openworm/ChannelWorm.git
+RUN git clone https://github.com/russelljjarvis/ChannelWorm.git 
+RUN ln -s /home/jovyan/work/scidash/ChannelWorm/channelworm /opt/conda/lib/python3.5/site-packages/channelworm
 RUN python -c "import channelworm"
 
 
@@ -132,6 +107,36 @@ RUN echo 'export NC_HOME=home/jovyan/work/scidash/neuroConstruct' >> ~/.bashrc
 RUN ln -s /home/jovyan/work/scidash/neuroConstruct/pythonnC /opt/conda/lib/python3.5/site-packages/pythonnC
 
 RUN python -c "import pythonnC" 
+
+
+
+
+#The following are convenience aliases
+#once inside the image make it such that a notebook can be created using 
+#the dockerimage python, but the hosts browser and the hosts mounted file system.
+RUN echo 'alias nb="jupyter-notebook --ip=* --no-browser"' >> ~/.bashrc
+RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
+RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
+RUN echo 'alias src="source ~/.bashrc"' >> ~/.bashrc
+RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
+RUN echo 'alias nu="cd /home/jovyan/work/scidash/neuronunit"' >> ~/.bashrc
+#Note the line below is required in order for jNeuroML to work inside pyNeuroML.
+ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64" #This line is not effective so the 
+#next line is a hack, that achieves the same objectives as those embodied in the command above:
+RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
+RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
+RUN echo 'alias sciunit="cd /work/scidash/sciunit"' >> ~/.bashrc
+RUN echo 'alias nu="python -c "from neuronunit.models.reduced import ReducedModel""'
+RUN echo "DJANGO_SETTINGS_MODULE=myproject.settings.production"> ~/.bashrc
+
+RUN apt-get update \
+      && apt-get install -y sudo \
+      && rm -rf /var/lib/apt/lists/*
+RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
+
+
+RUN chown -R jovyan $HOME
+
 USER $NB_USER
 WORKDIR /home/mnt
 RUN pip install execnet
