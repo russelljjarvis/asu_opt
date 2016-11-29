@@ -11,14 +11,7 @@ RUN pip install neo elephant
 
 WORKDIR /home/jovyan/work/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
-
-
-#Install some bloat ware temporarily.
-#To be deleted in the future.
-#stripathy/AIBS_cell_types is just a good test of some of the functionality of packages trying to get working 
-#here:
-WORKDIR /home/jovyan/work/scidash
-RUN git clone https://github.com/stripathy/AIBS_cell_types.git
+#RUN python -c "import sciunit"
 
 
 #Install some bloat ware temporarily.
@@ -38,30 +31,10 @@ RUN python -c "import pyneuroml"
 RUN conda install -y pyqt
 RUN conda install -y matplotlib 
 
-WORKDIR /home/jovyan/work/scidash
-
-#RUN pip install git+https://github.com/scidash/sciunit@dev --process-dependency-links
-#RUN pip install git+https://github.com/scidash/neuronunit@dev --process-dependency-links
 
 RUN pip install bs4
-<<<<<<< Updated upstream
-=======
-
-RUN git clone -b dev https://github.com/scidash/sciunit.git
-WORKDIR /home/jovyan/work/scidash/sciunit
-RUN ln -s /home/jovyan/work/scidash/sciunit/sciunit /opt/conda/lib/python3.5/site-packages/sciunit
-RUN python -c "import sciunit"
 
 WORKDIR /home/jovyan/work/scidash
-RUN git clone -b dev https://github.com/russelljjarvis/neuronunit.git
-#RUN pip install git+https://github.com/scidash/neuronunit
-#WORKDIR /home/jovyan/work/scidash/neuronunit
-RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages
-
-
-RUN python -c "import neuronunit"
-RUN python -c "from neuronunit.models.reduced import ReducedModel"
->>>>>>> Stashed changes
 
 RUN git clone -b dev https://github.com/scidash/sciunit.git
 WORKDIR /home/jovyan/work/scidash/sciunit
@@ -82,6 +55,9 @@ RUN python -c "from neuronunit.models.reduced import ReducedModel"
 
 
 
+
+RUN apt-get update #such that apt-get install works straight off the bat inside the docker image.
+#RUN apt-get install -y python3-setuptools
 RUN python -c "import quantities, neuronunit, sciunit"
 
 
@@ -93,10 +69,6 @@ RUN apt-get update \
       && rm -rf /var/lib/apt/lists/*
 RUN echo "jovyan ALL=NOPASSWD: ALL" >> /etc/sudoers
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 RUN chown -R jovyan $HOME
 
 #The following are convenience aliases
@@ -115,27 +87,13 @@ RUN echo 'export NEURON_HOME=/home/jovyan/neuron/nrn-7.4/x86_64' >> ~/.bashrc
 RUN echo 'alias model="cd /work/scidash/neuronunit/neuronunit/models"' >> ~/.bashrc
 RUN echo 'alias sciunit="cd /work/scidash/sciunit"' >> ~/.bashrc
 RUN echo 'alias nu="python -c "from neuronunit.models.reduced import ReducedModel""'
-<<<<<<< Updated upstream
-=======
-
-RUN git config --global user.email "rjjarvis@asu.edu"
-RUN git config --global user.name "Russell Jarvis"
-
 
 #from neuronunit.models.reduced import ReducedModel
-
-
->>>>>>> Stashed changes
-
-RUN git config --global user.email "rjjarvis@asu.edu"
-RUN git config --global user.name "Russell Jarvis"
-
 #WORKDIR /home/jovyan/mnt
 #RUN git clone https://github.com/russelljjarvis/sciunitopt.git
 
-#from neuronunit.models.reduced import ReducedModel
+ 
 
-USER $NB_USER
 
 #Test jNeuroML, which is called from pyNeuroML.
 #Line below Not a fair test unless I can supply the file /tmp/vanilla.xml
@@ -152,7 +110,32 @@ RUN nrniv
 
 #Uncomment the following two lines if you don't want to log in to the docker image interactively.
 
+
+RUN pip install git+https://github.com/openworm/ChannelWorm.git
+RUN pip install django
+RUN python -c "import channelworm"
+
+
+WORKDIR /home/jovyan/work/scidash
+RUN git clone https://github.com/NeuralEnsemble/neuroConstruct.git 
+
+WORKDIR /home/jovyan/work/scidash/neuroConstruct
+#RUN ./updatenC.sh
+#RUN echo NC_HOME
+RUN bash nC.sh -make
+RUN bash nCenv.sh
+RUN echo 'export NC_HOME=home/jovyan/work/scidash/neuroConstruct' >> ~/.bashrc
+
+#RUN bash nC.sh
+#RUN << open nC.sh and change NC_HOME >>
+
+RUN ln -s /home/jovyan/work/scidash/neuroConstruct/pythonnC /opt/conda/lib/python3.5/site-packages/pythonnC
+
+RUN python -c "import pythonnC" 
+USER $NB_USER
 WORKDIR /home/mnt
+RUN pip install execnet
+
 #WORKDIR /home/jovyan/mnt/sciunitopt
 #ENTRYPOINT python -i /home/jovyan/mnt/sciunitopt/AIBS.py 
 
