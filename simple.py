@@ -144,29 +144,9 @@ def update_amplitude(test,tests,score):
     #for i in [3,4,5]:
     #    tests[i].params['injected_square_current']['amplitude'] = rheobase*1.01 # Set current injection to just suprathreshold
 
-pdb.set_trace()    
 hooks = {tests[0]:{'f':update_amplitude}}
-
-
-import pdb
-print(tests)
-print(hooks)
-print(dir(sciunit.TestSuite))
-
 test=tests[0]
-
 suite = sciunit.TestSuite("vm_suite",test,hooks=hooks)
-
-
-# In[5]:
-#print('failed here')
-#model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
-#suite.judge(model)
-
-
-# In[9]:
-
-test = nu_tests.TimeConstantTest
 
 
 
@@ -189,7 +169,7 @@ class Test:
         dc=deap_capsule()
         pop_size=12
         ngen=20                                  
-        best_params, best_score, model =dc.sciunit_optimize(tests,hooks,pop_size,ngen,NDIM=2,OBJ_SIZE=2,range_of_values=self.range_of_values)
+        best_params, best_score, model =dc.sciunit_optimize(test,hooks,pop_size,ngen,NDIM=2,OBJ_SIZE=2,range_of_values=self.range_of_values)
         return (best_params, best_score, model)
 
   
