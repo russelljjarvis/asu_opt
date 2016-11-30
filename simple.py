@@ -118,12 +118,9 @@ else:
 
 
 tests += [nu_tests.RheobaseTest(observation=observation)]
-#Edited out below:   
-#
-                      
-test_class_params = [(nu_tests.InputResistanceTest,None),
-                     (nu_tests.TimeConstantTest,None),
-                     (nu_tests.CapacitanceTest,None)]
+test_class_params = [(nu_tests.InputResistanceTest,None)]#,
+                     #(nu_tests.TimeConstantTest,None),
+                     #(nu_tests.CapacitanceTest,None)]
                      
                      #,
                      #(nu_tests.RestingPotentialTest,None),   
@@ -146,7 +143,8 @@ def update_amplitude(test,tests,score):
     rheobase = score.prediction['value']
     #for i in [3,4,5]:
     #    tests[i].params['injected_square_current']['amplitude'] = rheobase*1.01 # Set current injection to just suprathreshold
-    
+
+pdb.set_trace()    
 hooks = {tests[0]:{'f':update_amplitude}}
 
 
