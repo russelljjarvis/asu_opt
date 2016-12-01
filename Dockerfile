@@ -5,15 +5,15 @@ RUN pip install git+https://github.com/soravux/scoop
 RUN pip install git+https://github.com/DEAP/deap
 RUN pip install git+https://github.com/rgerkin/rickpy
 
-WORKDIR /home/jovyan/work/scidash/pyNeuroML
+WORKDIR /home/mnt/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 RUN pip install neo elephant bs4
 
-WORKDIR /home/jovyan/work/scidash
+WORKDIR /home/mnt/scidash
 RUN pip install git+https://github.com/AllenInstitute/AllenSDK@py34_rgerkin --process-dependency-links
 
 RUN pip install git+https://github.com/python-quantities/python-quantities
-WORKDIR /home/jovyan/work/scidash/pyNeuroML
+WORKDIR /home/mnt/scidash/pyNeuroML
 RUN pip install git+https://github.com/NeuroML/pyNeuroML --process-dependency-links
 RUN python -c "import pyneuroml"
 
@@ -24,16 +24,16 @@ RUN conda install -y matplotlib
 #The purpose of adding python packages via symbolic links as done below, is to make it such that the developer has write access to the py package
 #and development changes are effective immediately to the py package.
 
-WORKDIR /home/jovyan/work/scidash
+WORKDIR /home/mnt/scidash
 
 RUN git clone -b dev https://github.com/scidash/sciunit.git
-WORKDIR /home/jovyan/work/scidash/sciunit
-RUN ln -s /home/jovyan/work/scidash/sciunit/sciunit /opt/conda/lib/python3.5/site-packages/sciunit
+WORKDIR /home/mnt/scidash/sciunit
+RUN ln -s /home/mnt/scidash/sciunit/sciunit /opt/conda/lib/python3.5/site-packages/sciunit
 RUN python -c "import sciunit"
 
-WORKDIR /home/jovyan/work/scidash
+WORKDIR /home/mnt/scidash
 RUN git clone -b dev https://github.com/russelljjarvis/neuronunit.git
-RUN ln -s /home/jovyan/work/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages
+RUN ln -s /home/mnt/scidash/neuronunit/neuronunit /opt/conda/lib/python3.5/site-packages
 
 
 RUN python -c "import neuronunit"
@@ -55,22 +55,22 @@ RUN pip install django
 #Note the code below is not sufficient to properly run channelworm in python
 #channelworm depends on DJANGO which needs a web server configuration to run.
 RUN git clone https://github.com/russelljjarvis/ChannelWorm.git 
-RUN ln -s /home/jovyan/work/scidash/ChannelWorm/channelworm /opt/conda/lib/python3.5/site-packages/channelworm
+RUN ln -s /home/mnt/scidash/ChannelWorm/channelworm /opt/conda/lib/python3.5/site-packages/channelworm
 RUN python -c "import channelworm"
 
 
-WORKDIR /home/jovyan/work/scidash
+WORKDIR /home/mnt/scidash
 
 #Install NeuroConstruct
 
 RUN git clone https://github.com/NeuralEnsemble/neuroConstruct.git 
-WORKDIR /home/jovyan/work/scidash/neuroConstruct
+WORKDIR /home/mnt/scidash/neuroConstruct
 RUN bash nC.sh -make
 RUN bash nCenv.sh
 RUN echo 'export NC_HOME=home/jovyan/work/scidash/neuroConstruct' >> ~/.bashrc
 
 
-RUN ln -s /home/jovyan/work/scidash/neuroConstruct/pythonnC /opt/conda/lib/python3.5/site-packages/pythonnC
+RUN ln -s /home/mnt/scidash/neuroConstruct/pythonnC /opt/conda/lib/python3.5/site-packages/pythonnC
 RUN python -c "import pythonnC" 
 
 
@@ -93,7 +93,7 @@ RUN echo 'alias mnt="cd /home/mnt"' >> ~/.bashrc
 RUN echo 'alias erc="emacs ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias src="source ~/.bashrc"' >> ~/.bashrc
 RUN echo 'alias egg="cd /opt/conda/lib/python3.5/site-packages/"' >> ~/.bashrc 
-RUN echo 'alias nu="cd /home/jovyan/work/scidash/neuronunit"' >> ~/.bashrc
+RUN echo 'alias nu="cd /home/mnt/scidash/neuronunit"' >> ~/.bashrc
 #Note the line below is required in order for jNeuroML to work inside pyNeuroML.
 ENV NEURON_HOME "/home/jovyan/neuron/nrn-7.4/x86_64" #This line is not effective so the 
 #next line is a hack, that achieves the same objectives as those embodied in the command above:
