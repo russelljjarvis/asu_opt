@@ -24,7 +24,7 @@ class deap_capsule:
     '''
     Just a container for hiding implementation, not a very sophisticated one at that.
     '''
-    def __init__(self,range_of_values=None,*args):
+    def __init__(self,*args):
         self.tb = base.Toolbox()
         self.ngen=None
         self.pop_size=None
@@ -35,12 +35,12 @@ class deap_capsule:
         #TODO email the DEAP list about this issue too.        
         #TODO refactor MU into pop_size 
                              #self.ff,pop_size,ngen,NDIM=1,OBJ_SIZE=1,self.range_of_values
-    def sciunit_optimize(self,test,hooks,pop_size,ngen,NDIM=1,OBJ_SIZE=1,range_of_values=None,seed_in=1):
-    #def sciunit_optimize(ff=self.ff,range_of_values=None,seed=None):
-        
+    def sciunit_optimize(self,test_or_suite,model_path,pop_size,ngen,rov,
+                              NDIM=1,OBJ_SIZE=1,seed_in=1):    
         self.ngen = ngen#250
         self.pop_size = pop_size#population size
-        
+        self.rov = rov # Range of values
+
         toolbox = base.Toolbox()
         creator.create("FitnessMax", base.Fitness, weights=(-1.0,))#Final comma here, important, not a typo, must be a tuple type.
         creator.create("Individual", array.array, typecode='d', fitness=creator.FitnessMax)
@@ -71,9 +71,8 @@ class deap_capsule:
 
 
         #TODO make range_of_values a parameter of the main class method.
-        range_of_values=np.linspace(-170,170,10000)
-        BOUND_LOW=np.min(range_of_values)
-        BOUND_UP=np.max(range_of_values)
+        BOUND_LOW=np.min(rov)
+        BOUND_UP=np.max(rov)
 
 
         toolbox.register("map", futures.map)
@@ -85,22 +84,16 @@ class deap_capsule:
 
         
         def call2sciunitjudge(individual):#callsciunitjudge
-            from sciunit import TestSuite
-            import sciunit
             from neuronunit.models.reduced import ReducedModel
-            import os
-            HOME = os.path.expanduser('~')
-            LEMS_MODEL_PATH = os.path.join(os.getcwd(),'LEMS_2007One.xml')
-            model = ReducedModel(LEMS_MODEL_PATH, 
+            model = ReducedModel(model_path, 
                          name='V_rest=%dmV' % individual[0], 
                          attrs={'//izhikevich2007Cell':
                                     {'vr':'%d mV' %individual[0]}
                                })
-                        
-            suite = sciunit.TestSuite("vm_suite",test,hooks=hooks)
 
-            check_error = suite.judge(model)
-            error=check_error.values[0][0].sort_key
+            score = test_or_suite.judge(model)
+            print("V_rest = %.1f; SortKey = %.3f" % (individual[0],score.sort_key))
+            error = -score.sort_key
 
             #pdb.set_trace()
 
@@ -117,8 +110,8 @@ class deap_capsule:
             sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
             ''' 
             #from scoop.futures import scoop
-            print(scoop.utils.getHosts())
-            print(scoop.utils.cpu_count())
+            #print(scoop.utils.getHosts())
+            #print(scoop.utils.cpu_count())
             assert type(individual[0])==float# protect input.            
             assert type(individual[1])==float# protect input.            
             #Linear sum of errors, this is not what I recommend.
@@ -202,7 +195,7 @@ class deap_capsule:
             
             # The population is entirely replaced by the offspring
             pop[:] = offspring
-            error_surface(pop,gen,ff=self.ff)
+            #error_surface(pop,gen,ff=self.ff)
             # Gather all the fitnesses in one list and print the stats
             fits = [ind.fitness.values[0] for ind in pop]
             #TODO terminate DEAP learning when the population converges to save computation 
@@ -212,8 +205,8 @@ class deap_capsule:
         record = stats.compile(pop)
         logbook.record(gen=gen, evals=len(invalid_ind), **record)
         print(logbook.stream)
-        error_surface(pop,gen,ff=self.ff)
-        return (pop[0][0],pop[0].sus0,ff)
+        #error_surface(pop,gen,ff=self.ff)
+        return pop#(pop[0][0],pop[0].sus0,ff)
 
         '''
         Depreciated
