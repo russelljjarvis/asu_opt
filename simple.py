@@ -148,6 +148,7 @@ hooks = {tests[0]:{'f':update_amplitude}}
 test=tests[0]
 suite = sciunit.TestSuite("vm_suite",test,hooks=hooks)
 
+pdb.set_trace()
 
 
  

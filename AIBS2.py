@@ -154,9 +154,9 @@ tests += [nu_tests.RheobaseTest(observation=observation)]
 #Edited out below:   
 #
                       
-test_class_params = [(nu_tests.InputResistanceTest,None),
-                     (nu_tests.TimeConstantTest,None),
-                     (nu_tests.CapacitanceTest,None)]
+test_class_params = [(nu_tests.InputResistanceTest,None)]#,
+                     #(nu_tests.TimeConstantTest,None),
+                     #(nu_tests.CapacitanceTest,None)]
                      
                      #,
                      #(nu_tests.RestingPotentialTest,None),   
@@ -173,6 +173,7 @@ for cls,params in test_class_params:
     print(observation)
     print(tests)
     print(cls,params)
+    pdb.set_trace()
 
     
 def update_amplitude(test,tests,score):
@@ -183,7 +184,6 @@ def update_amplitude(test,tests,score):
 hooks = {tests[0]:{'f':update_amplitude}}
 
 
-import pdb
 print(tests)
 print(hooks)
 print(dir(sciunit.TestSuite))
@@ -197,6 +197,7 @@ suite = sciunit.TestSuite("vm_suite",tests,hooks=hooks)
 
 model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
 suite.judge(model)
+import pdb
 
 
 # In[9]:

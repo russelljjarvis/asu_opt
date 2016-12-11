@@ -108,7 +108,7 @@ def get_sp(experiment_params,sweep_ids):
     TODO: move method into neuronunit/aibs.py, as this is a fix for that file.    
     '''
     sweep_num = None
-    for sp in experiment_params:
+    for sp in experiment_params:cd
        for i in sweep_ids:
           if sp['id']==i:
               sweep_num = sp['sweep_number']
@@ -161,8 +161,9 @@ else:
 #Izkevitch model
 
 
+model = ReducedModel(LEMS_MODEL_PATH,name='vanilla')
 
-tests += [nu_tests.RheobaseTest(observation=observation)]
+tests += [nu_tests.RheobaseTest(observation=observation)]n
 #Edited out below:   
 #
                       

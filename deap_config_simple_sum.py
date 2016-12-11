@@ -101,6 +101,7 @@ class deap_capsule:
 
             check_error = suite.judge(model)
             error=check_error.values[0][0].sort_key
+            pdb.set_trace()
 
             #pdb.set_trace()
 
