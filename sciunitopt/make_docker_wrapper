@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+RUN git config --global user.name "spam_me" >> Dockerfile
+RUN git config --global user.email "spam_box@asu.edu; bash" >> Dockerfile
