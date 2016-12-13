@@ -20,7 +20,7 @@ from deap import tools
 #Is inspyred what is crashing out matplotlib???
 #from inspyred.ec import terminators as term
 
-class deap_capsule:
+class DeapCapsule:
     '''
     Just a container for hiding implementation, not a very sophisticated one at that.
     '''
