@@ -1,4 +1,5 @@
 
+
 import pdb
 import numpy as np
 
@@ -84,22 +85,38 @@ class DeapCapsule:
 
         
         def call2sciunitjudge(individual):#callsciunitjudge
+
             from neuronunit.models import backends
             #model = ReducedModel(IZHIKEVICH_PATH+str('/LEMS_2007One.xml'),name='vanilla')
-            model=backends.NEURONBackend(model_path,
-                                         name='V_rest=%dmV' % individual[0], 
-                                         attrs={'//izhikevich2007Cell':
-                                                {'vr':'%d mV' %individual[0]}
-                                            })
+            #dir(backends.NeuronBackend)
+            import os
+            # This example is from https://github.com/OpenSourceBrain/IzhikevichModel.
+            IZHIKEVICH_PATH = os.getcwd()+str('/neuronunit/software_tests/NeuroML2') # Replace this the path to your
+            LEMS_MODEL_PATH = IZHIKEVICH_PATH+str('/LEMS_2007One.xml')
 
-                #LEMS_MODEL_PATH,name='vanilla')
+                                                                                   # working copy of
+            # github.com/OpenSourceBrain/IzhikevichModel.
+            #LEMS_MODEL_PATH = os.path.join(IZHIKEVICH_PATH,)
+            name={}
+            attrs={}
+            name_value= str(individual[0])+str('mV')
+            name={'V_rest': name_value } 
 
-            #model = ReducedModel(model_path, 
-            #             name='V_rest=%dmV' % individual[0], 
+            model=backends.NEURONBackend(LEMS_MODEL_PATH,IZHIKEVICH_PATH,
+                         name={'V_rest': name_value }, 
+                         attrs={'//izhikevich2007Cell':{'vr':name_value }}
+                                        )
+            model.load_model()
+
+                                         #name='vanilla')
+            #from neuronunit.models.reduced import ReducedModel
+            #model = ReducedModel(model_path,
+                      #             name='V_rest=%dmV' % individual[0], 
             #             attrs={'//izhikevich2007Cell':
-            #                        {'vr':'%d mV' %individual[0]}
-            #                   })
+             #                       {'vr':'%d mV' %individual[0]}
+             #                  })
 
+  
             score = test_or_suite.judge(model)
             print("V_rest = %.1f; SortKey = %.3f" % (individual[0],score.sort_key))
             error = -score.sort_key
