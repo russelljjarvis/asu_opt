@@ -84,12 +84,21 @@ class DeapCapsule:
 
         
         def call2sciunitjudge(individual):#callsciunitjudge
-            from neuronunit.models.reduced import ReducedModel
-            model = ReducedModel(model_path, 
-                         name='V_rest=%dmV' % individual[0], 
-                         attrs={'//izhikevich2007Cell':
-                                    {'vr':'%d mV' %individual[0]}
-                               })
+            from neuronunit.models import backends
+            #model = ReducedModel(IZHIKEVICH_PATH+str('/LEMS_2007One.xml'),name='vanilla')
+            model=backends.NEURONBackend(model_path,
+                                         name='V_rest=%dmV' % individual[0], 
+                                         attrs={'//izhikevich2007Cell':
+                                                {'vr':'%d mV' %individual[0]}
+                                            })
+
+                #LEMS_MODEL_PATH,name='vanilla')
+
+            #model = ReducedModel(model_path, 
+            #             name='V_rest=%dmV' % individual[0], 
+            #             attrs={'//izhikevich2007Cell':
+            #                        {'vr':'%d mV' %individual[0]}
+            #                   })
 
             score = test_or_suite.judge(model)
             print("V_rest = %.1f; SortKey = %.3f" % (individual[0],score.sort_key))
