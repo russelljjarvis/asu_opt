@@ -17,8 +17,6 @@ from deap import benchmarks
 #from deap.benchmarks.tools import diversity, convergence, hypervolume
 from deap import creator
 from deap import tools
-
-#Is inspyred what is crashing out matplotlib???
 #from inspyred.ec import terminators as term
 
 class DeapCapsule:
@@ -53,11 +51,7 @@ class DeapCapsule:
             '''
             def __init__(self, *args):
                 list.__init__(self, *args)
-                self.stored_x=None
-                #self.stored_f_x=None
-                self.sciunitscore=[]#(0,0)
-                self.sus0=None
-                self.sus1=None
+                self.sciunitscore=[]
    
 
         def uniform(low, up, size=None):
@@ -71,7 +65,6 @@ class DeapCapsule:
                 return [random.uniform(a, b) for a, b in zip([low] * size, [up] * size)]
 
 
-        #TODO make range_of_values a parameter of the main class method.
         BOUND_LOW=np.min(rov)
         BOUND_UP=np.max(rov)
 
@@ -81,82 +74,35 @@ class DeapCapsule:
         toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
         toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
         toolbox.register("population", tools.initRepeat, list, toolbox.individual)
-      
 
-        
         def call2sciunitjudge(individual):#callsciunitjudge
 
             from neuronunit.models import backends
-            #model = ReducedModel(IZHIKEVICH_PATH+str('/LEMS_2007One.xml'),name='vanilla')
-            #dir(backends.NeuronBackend)
             import os
             # This example is from https://github.com/OpenSourceBrain/IzhikevichModel.
             IZHIKEVICH_PATH = os.getcwd()+str('/neuronunit/software_tests/NeuroML2') # Replace this the path to your
             LEMS_MODEL_PATH = IZHIKEVICH_PATH+str('/LEMS_2007One.xml')
-
-                                                                                   # working copy of
-            # github.com/OpenSourceBrain/IzhikevichModel.
-            #LEMS_MODEL_PATH = os.path.join(IZHIKEVICH_PATH,)
             name={}
             attrs={}
             name_value= str(individual[0])+str('mV')
             name={'V_rest': name_value } 
-
             model=backends.NEURONBackend(LEMS_MODEL_PATH,IZHIKEVICH_PATH,
                          name={'V_rest': name_value }, 
                          attrs={'//izhikevich2007Cell':{'vr':name_value }}
                                         )
             model.load_model()
-
-                                         #name='vanilla')
-            #from neuronunit.models.reduced import ReducedModel
-            #model = ReducedModel(model_path,
-                      #             name='V_rest=%dmV' % individual[0], 
-            #             attrs={'//izhikevich2007Cell':
-             #                       {'vr':'%d mV' %individual[0]}
-             #                  })
-
-  
             score = test_or_suite.judge(model)
             print("V_rest = %.1f; SortKey = %.3f" % (individual[0],score.sort_key))
             error = -score.sort_key
 
-            #pdb.set_trace()
-
-            #check_error = TestSuite.judge(models=model)#, skip_incapable=True, stop_on_error=True, deep_error=False)
-            
-            #from sciunit import TestSuite
-            #>>> help(TestSuite.judge)
-            #Help on function judge in module sciunit:
-
-            #judge(self, models, skip_incapable=True, stop_on_error=True, deep_error=False)
-
-
-            '''
-            sciunit_judge is pretending to take the model individual and return the quality of the model f(X).
-            ''' 
-            #from scoop.futures import scoop
-            #print(scoop.utils.getHosts())
-            #print(scoop.utils.cpu_count())
             assert type(individual[0])==float# protect input.            
             assert type(individual[1])==float# protect input.            
-            #Linear sum of errors, this is not what I recommend.
-            #error=calc_errorf(individual, ff)+calc_errorg(individual, gg)#Previous_best,ff)
             return error, 
 
-        #pdb.set_trace()
-        #individual,ff,previous_best
         toolbox.register("evaluate",call2sciunitjudge)#,individual,ff,previous_best)
         toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0)
         toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
-        #toolbox.register("select", tools.selNSGA2)
-
-        toolbox.register("select", tools.selTournament, tournsize=3)
-        #toolbox.register("select", tools.selBEA, tournsize=3)
-
-        #toolbox.register("select", plot_selector, selector=tools.selBest)
-        #toolbox.register("select", tools.selIBEA, selector=selIBEA)
-        
+        toolbox.register("select", tools.selTournament, tournsize=3)        
         seed=1
         random.seed(seed)
 
